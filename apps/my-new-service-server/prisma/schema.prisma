@@ -1,0 +1,58 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Recruiter {
+  createdAt DateTime @default(now())
+  email     String?
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  updatedAt DateTime @updatedAt
+}
+
+model Candidate {
+  createdAt         DateTime    @default(now())
+  domainExpertise   String?
+  email             String?
+  firstName         String?
+  id                String      @id @default(cuid())
+  interviews        Interview[]
+  lastName          String?
+  resume            Json?
+  skills            String?
+  updatedAt         DateTime    @updatedAt
+  yearsOfExperience Int?
+}
+
+model JobPosition {
+  createdAt   DateTime               @default(now())
+  description String?
+  id          String                 @id @default(cuid())
+  interviews  Interview[]
+  status      EnumJobPositionStatus?
+  title       String?
+  updatedAt   DateTime               @updatedAt
+}
+
+model Interview {
+  candidate     Candidate?   @relation(fields: [candidateId], references: [id])
+  candidateId   String?
+  createdAt     DateTime     @default(now())
+  date          DateTime?
+  feedback      String?
+  id            String       @id @default(cuid())
+  interviewer   String?
+  jobPosition   JobPosition? @relation(fields: [jobPositionId], references: [id])
+  jobPositionId String?
+  updatedAt     DateTime     @updatedAt
+}
+
+enum EnumJobPositionStatus {
+  Option1
+}

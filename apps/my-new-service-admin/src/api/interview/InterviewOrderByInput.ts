@@ -1,12 +1,12 @@
 import { SortOrder } from "../../util/SortOrder";
 
 export type InterviewOrderByInput = {
-  candidateId?: SortOrder;
+  id?: SortOrder;
   createdAt?: SortOrder;
+  updatedAt?: SortOrder;
   date?: SortOrder;
   feedback?: SortOrder;
-  id?: SortOrder;
   interviewer?: SortOrder;
+  candidateId?: SortOrder;
   jobPositionId?: SortOrder;
-  updatedAt?: SortOrder;
 };

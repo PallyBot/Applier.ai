@@ -3,20 +3,20 @@ import {
   Show,
   SimpleShowLayout,
   ShowProps,
-  DateField,
   TextField,
+  DateField,
 } from "react-admin";
 
 export const RecruiterShow = (props: ShowProps): React.ReactElement => {
   return (
     <Show {...props}>
       <SimpleShowLayout>
-        <DateField source="createdAt" label="Created At" />
-        <TextField label="email" source="email" />
-        <TextField label="firstName" source="firstName" />
         <TextField label="ID" source="id" />
-        <TextField label="lastName" source="lastName" />
+        <DateField source="createdAt" label="Created At" />
         <DateField source="updatedAt" label="Updated At" />
+        <TextField label="firstName" source="firstName" />
+        <TextField label="lastName" source="lastName" />
+        <TextField label="email" source="email" />
       </SimpleShowLayout>
     </Show>
   );

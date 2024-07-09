@@ -20,11 +20,11 @@ import {
   Min,
   Max,
 } from "class-validator";
-import { InterviewUpdateManyWithoutCandidatesInput } from "./InterviewUpdateManyWithoutCandidatesInput";
-import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
+import { InterviewUpdateManyWithoutCandidatesInput } from "./InterviewUpdateManyWithoutCandidatesInput";
+import { Type } from "class-transformer";
 
 @InputType()
 class CandidateUpdateInput {
@@ -38,7 +38,7 @@ class CandidateUpdateInput {
   @Field(() => String, {
     nullable: true,
   })
-  domainExpertise?: string | null;
+  firstName?: string | null;
 
   @ApiProperty({
     required: false,
@@ -53,6 +53,16 @@ class CandidateUpdateInput {
 
   @ApiProperty({
     required: false,
+  })
+  @IsJSONValue()
+  @IsOptional()
+  @Field(() => GraphQLJSON, {
+    nullable: true,
+  })
+  resume?: InputJsonValue;
+
+  @ApiProperty({
+    required: false,
     type: String,
   })
   @IsString()
@@ -61,7 +71,7 @@ class CandidateUpdateInput {
   @Field(() => String, {
     nullable: true,
   })
-  firstName?: string | null;
+  lastName?: string | null;
 
   @ApiProperty({
     required: false,
@@ -85,17 +95,7 @@ class CandidateUpdateInput {
   @Field(() => String, {
     nullable: true,
   })
-  lastName?: string | null;
-
-  @ApiProperty({
-    required: false,
-  })
-  @IsJSONValue()
-  @IsOptional()
-  @Field(() => GraphQLJSON, {
-    nullable: true,
-  })
-  resume?: InputJsonValue;
+  skills?: string | null;
 
   @ApiProperty({
     required: false,
@@ -107,7 +107,7 @@ class CandidateUpdateInput {
   @Field(() => String, {
     nullable: true,
   })
-  skills?: string | null;
+  domainExpertise?: string | null;
 
   @ApiProperty({
     required: false,

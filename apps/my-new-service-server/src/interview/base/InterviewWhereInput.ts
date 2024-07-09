@@ -11,27 +11,26 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { CandidateWhereUniqueInput } from "../../candidate/base/CandidateWhereUniqueInput";
-import { ValidateNested, IsOptional } from "class-validator";
+import { StringFilter } from "../../util/StringFilter";
 import { Type } from "class-transformer";
+import { IsOptional, ValidateNested } from "class-validator";
 import { DateTimeNullableFilter } from "../../util/DateTimeNullableFilter";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
-import { StringFilter } from "../../util/StringFilter";
+import { CandidateWhereUniqueInput } from "../../candidate/base/CandidateWhereUniqueInput";
 import { JobPositionWhereUniqueInput } from "../../jobPosition/base/JobPositionWhereUniqueInput";
 
 @InputType()
 class InterviewWhereInput {
   @ApiProperty({
     required: false,
-    type: () => CandidateWhereUniqueInput,
+    type: StringFilter,
   })
-  @ValidateNested()
-  @Type(() => CandidateWhereUniqueInput)
+  @Type(() => StringFilter)
   @IsOptional()
-  @Field(() => CandidateWhereUniqueInput, {
+  @Field(() => StringFilter, {
     nullable: true,
   })
-  candidate?: CandidateWhereUniqueInput;
+  id?: StringFilter;
 
   @ApiProperty({
     required: false,
@@ -57,17 +56,6 @@ class InterviewWhereInput {
 
   @ApiProperty({
     required: false,
-    type: StringFilter,
-  })
-  @Type(() => StringFilter)
-  @IsOptional()
-  @Field(() => StringFilter, {
-    nullable: true,
-  })
-  id?: StringFilter;
-
-  @ApiProperty({
-    required: false,
     type: StringNullableFilter,
   })
   @Type(() => StringNullableFilter)
@@ -76,6 +64,18 @@ class InterviewWhereInput {
     nullable: true,
   })
   interviewer?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: () => CandidateWhereUniqueInput,
+  })
+  @ValidateNested()
+  @Type(() => CandidateWhereUniqueInput)
+  @IsOptional()
+  @Field(() => CandidateWhereUniqueInput, {
+    nullable: true,
+  })
+  candidate?: CandidateWhereUniqueInput;
 
   @ApiProperty({
     required: false,

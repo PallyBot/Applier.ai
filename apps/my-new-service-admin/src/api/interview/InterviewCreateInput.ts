@@ -2,9 +2,9 @@ import { CandidateWhereUniqueInput } from "../candidate/CandidateWhereUniqueInpu
 import { JobPositionWhereUniqueInput } from "../jobPosition/JobPositionWhereUniqueInput";
 
 export type InterviewCreateInput = {
-  candidate?: CandidateWhereUniqueInput | null;
   date?: Date | null;
   feedback?: string | null;
   interviewer?: string | null;
+  candidate?: CandidateWhereUniqueInput | null;
   jobPosition?: JobPositionWhereUniqueInput | null;
 };

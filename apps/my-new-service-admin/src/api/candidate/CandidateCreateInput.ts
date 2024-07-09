@@ -1,13 +1,13 @@
-import { InterviewCreateNestedManyWithoutCandidatesInput } from "./InterviewCreateNestedManyWithoutCandidatesInput";
 import { InputJsonValue } from "../../types";
+import { InterviewCreateNestedManyWithoutCandidatesInput } from "./InterviewCreateNestedManyWithoutCandidatesInput";
 
 export type CandidateCreateInput = {
-  domainExpertise?: string | null;
-  email?: string | null;
   firstName?: string | null;
-  interviews?: InterviewCreateNestedManyWithoutCandidatesInput;
-  lastName?: string | null;
+  email?: string | null;
   resume?: InputJsonValue;
+  lastName?: string | null;
+  interviews?: InterviewCreateNestedManyWithoutCandidatesInput;
   skills?: string | null;
+  domainExpertise?: string | null;
   yearsOfExperience?: number | null;
 };

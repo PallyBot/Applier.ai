@@ -1,5 +1,5 @@
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DB_URL")
 }
 
@@ -8,49 +8,49 @@ generator client {
 }
 
 model Recruiter {
-  createdAt DateTime @default(now())
-  email     String?
-  firstName String?
   id        String   @id @default(cuid())
-  lastName  String?
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  email     String?
 }
 
 model Candidate {
-  createdAt         DateTime    @default(now())
-  domainExpertise   String?
-  email             String?
-  firstName         String?
   id                String      @id @default(cuid())
-  interviews        Interview[]
-  lastName          String?
-  resume            Json?
-  skills            String?
+  createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
+  firstName         String?
+  email             String?
+  resume            Json?
+  lastName          String?
+  interviews        Interview[]
+  skills            String?
+  domainExpertise   String?
   yearsOfExperience Int?
 }
 
 model JobPosition {
-  createdAt   DateTime               @default(now())
-  description String?
   id          String                 @id @default(cuid())
-  interviews  Interview[]
-  status      EnumJobPositionStatus?
-  title       String?
+  createdAt   DateTime               @default(now())
   updatedAt   DateTime               @updatedAt
+  title       String?
+  description String?
+  status      EnumJobPositionStatus?
+  interviews  Interview[]
 }
 
 model Interview {
-  candidate     Candidate?   @relation(fields: [candidateId], references: [id])
-  candidateId   String?
+  id            String       @id @default(cuid())
   createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   date          DateTime?
   feedback      String?
-  id            String       @id @default(cuid())
   interviewer   String?
+  candidate     Candidate?   @relation(fields: [candidateId], references: [id])
+  candidateId   String?
   jobPosition   JobPosition? @relation(fields: [jobPositionId], references: [id])
   jobPositionId String?
-  updatedAt     DateTime     @updatedAt
 }
 
 enum EnumJobPositionStatus {

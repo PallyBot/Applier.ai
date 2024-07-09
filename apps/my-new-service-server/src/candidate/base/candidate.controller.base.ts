@@ -36,15 +36,15 @@ export class CandidateControllerBase {
     return await this.service.createCandidate({
       data: data,
       select: {
-        createdAt: true,
-        domainExpertise: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
-        resume: true,
-        skills: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        email: true,
+        resume: true,
+        lastName: true,
+        skills: true,
+        domainExpertise: true,
         yearsOfExperience: true,
       },
     });
@@ -58,15 +58,15 @@ export class CandidateControllerBase {
     return this.service.candidates({
       ...args,
       select: {
-        createdAt: true,
-        domainExpertise: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
-        resume: true,
-        skills: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        email: true,
+        resume: true,
+        lastName: true,
+        skills: true,
+        domainExpertise: true,
         yearsOfExperience: true,
       },
     });
@@ -81,15 +81,15 @@ export class CandidateControllerBase {
     const result = await this.service.candidate({
       where: params,
       select: {
-        createdAt: true,
-        domainExpertise: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
-        resume: true,
-        skills: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        email: true,
+        resume: true,
+        lastName: true,
+        skills: true,
+        domainExpertise: true,
         yearsOfExperience: true,
       },
     });
@@ -113,15 +113,15 @@ export class CandidateControllerBase {
         where: params,
         data: data,
         select: {
-          createdAt: true,
-          domainExpertise: true,
-          email: true,
-          firstName: true,
           id: true,
-          lastName: true,
-          resume: true,
-          skills: true,
+          createdAt: true,
           updatedAt: true,
+          firstName: true,
+          email: true,
+          resume: true,
+          lastName: true,
+          skills: true,
+          domainExpertise: true,
           yearsOfExperience: true,
         },
       });
@@ -145,15 +145,15 @@ export class CandidateControllerBase {
       return await this.service.deleteCandidate({
         where: params,
         select: {
-          createdAt: true,
-          domainExpertise: true,
-          email: true,
-          firstName: true,
           id: true,
-          lastName: true,
-          resume: true,
-          skills: true,
+          createdAt: true,
           updatedAt: true,
+          firstName: true,
+          email: true,
+          resume: true,
+          lastName: true,
+          skills: true,
+          domainExpertise: true,
           yearsOfExperience: true,
         },
       });
@@ -177,25 +177,24 @@ export class CandidateControllerBase {
     const results = await this.service.findInterviews(params.id, {
       ...query,
       select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        date: true,
+        feedback: true,
+        interviewer: true,
+
         candidate: {
           select: {
             id: true,
           },
         },
 
-        createdAt: true,
-        date: true,
-        feedback: true,
-        id: true,
-        interviewer: true,
-
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
     if (results === null) {

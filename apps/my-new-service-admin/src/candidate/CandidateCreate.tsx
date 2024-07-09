@@ -16,9 +16,10 @@ export const CandidateCreate = (props: CreateProps): React.ReactElement => {
   return (
     <Create {...props}>
       <SimpleForm>
-        <TextInput label="domainExpertise" source="domainExpertise" />
-        <TextInput label="email" source="email" type="email" />
         <TextInput label="firstName" source="firstName" />
+        <TextInput label="email" source="email" type="email" />
+        <div />
+        <TextInput label="lastName" source="lastName" />
         <ReferenceArrayInput
           source="interviews"
           reference="Interview"
@@ -27,9 +28,8 @@ export const CandidateCreate = (props: CreateProps): React.ReactElement => {
         >
           <SelectArrayInput optionText={InterviewTitle} />
         </ReferenceArrayInput>
-        <TextInput label="lastName" source="lastName" />
-        <div />
         <TextInput label="skills" multiline source="skills" />
+        <TextInput label="domainExpertise" source="domainExpertise" />
         <NumberInput
           step={1}
           label="yearsOfExperience"

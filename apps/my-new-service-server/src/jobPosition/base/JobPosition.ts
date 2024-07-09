@@ -12,39 +12,19 @@ https://docs.amplication.com/how-to/custom-code
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import {
-  IsDate,
   IsString,
+  IsDate,
   MaxLength,
   IsOptional,
-  ValidateNested,
   IsEnum,
+  ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { Interview } from "../../interview/base/Interview";
 import { EnumJobPositionStatus } from "./EnumJobPositionStatus";
+import { Interview } from "../../interview/base/Interview";
 
 @ObjectType()
 class JobPosition {
-  @ApiProperty({
-    required: true,
-  })
-  @IsDate()
-  @Type(() => Date)
-  @Field(() => Date)
-  createdAt!: Date;
-
-  @ApiProperty({
-    required: false,
-    type: String,
-  })
-  @IsString()
-  @MaxLength(1000)
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-  })
-  description!: string | null;
-
   @ApiProperty({
     required: true,
     type: String,
@@ -54,24 +34,20 @@ class JobPosition {
   id!: string;
 
   @ApiProperty({
-    required: false,
-    type: () => [Interview],
+    required: true,
   })
-  @ValidateNested()
-  @Type(() => Interview)
-  @IsOptional()
-  interviews?: Array<Interview>;
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  createdAt!: Date;
 
   @ApiProperty({
-    required: false,
-    enum: EnumJobPositionStatus,
+    required: true,
   })
-  @IsEnum(EnumJobPositionStatus)
-  @IsOptional()
-  @Field(() => EnumJobPositionStatus, {
-    nullable: true,
-  })
-  status?: "Option1" | null;
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  updatedAt!: Date;
 
   @ApiProperty({
     required: false,
@@ -86,12 +62,36 @@ class JobPosition {
   title!: string | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
+    type: String,
   })
-  @IsDate()
-  @Type(() => Date)
-  @Field(() => Date)
-  updatedAt!: Date;
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  description!: string | null;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumJobPositionStatus,
+  })
+  @IsEnum(EnumJobPositionStatus)
+  @IsOptional()
+  @Field(() => EnumJobPositionStatus, {
+    nullable: true,
+  })
+  status?: "Option1" | null;
+
+  @ApiProperty({
+    required: false,
+    type: () => [Interview],
+  })
+  @ValidateNested()
+  @Type(() => Interview)
+  @IsOptional()
+  interviews?: Array<Interview>;
 }
 
 export { JobPosition as JobPosition };

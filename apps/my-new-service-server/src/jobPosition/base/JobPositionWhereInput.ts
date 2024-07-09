@@ -11,26 +11,15 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { StringNullableFilter } from "../../util/StringNullableFilter";
-import { Type } from "class-transformer";
-import { IsOptional, ValidateNested, IsEnum } from "class-validator";
 import { StringFilter } from "../../util/StringFilter";
-import { InterviewListRelationFilter } from "../../interview/base/InterviewListRelationFilter";
+import { Type } from "class-transformer";
+import { IsOptional, IsEnum, ValidateNested } from "class-validator";
+import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { EnumJobPositionStatus } from "./EnumJobPositionStatus";
+import { InterviewListRelationFilter } from "../../interview/base/InterviewListRelationFilter";
 
 @InputType()
 class JobPositionWhereInput {
-  @ApiProperty({
-    required: false,
-    type: StringNullableFilter,
-  })
-  @Type(() => StringNullableFilter)
-  @IsOptional()
-  @Field(() => StringNullableFilter, {
-    nullable: true,
-  })
-  description?: StringNullableFilter;
-
   @ApiProperty({
     required: false,
     type: StringFilter,
@@ -44,15 +33,25 @@ class JobPositionWhereInput {
 
   @ApiProperty({
     required: false,
-    type: () => InterviewListRelationFilter,
+    type: StringNullableFilter,
   })
-  @ValidateNested()
-  @Type(() => InterviewListRelationFilter)
+  @Type(() => StringNullableFilter)
   @IsOptional()
-  @Field(() => InterviewListRelationFilter, {
+  @Field(() => StringNullableFilter, {
     nullable: true,
   })
-  interviews?: InterviewListRelationFilter;
+  title?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: StringNullableFilter,
+  })
+  @Type(() => StringNullableFilter)
+  @IsOptional()
+  @Field(() => StringNullableFilter, {
+    nullable: true,
+  })
+  description?: StringNullableFilter;
 
   @ApiProperty({
     required: false,
@@ -67,14 +66,15 @@ class JobPositionWhereInput {
 
   @ApiProperty({
     required: false,
-    type: StringNullableFilter,
+    type: () => InterviewListRelationFilter,
   })
-  @Type(() => StringNullableFilter)
+  @ValidateNested()
+  @Type(() => InterviewListRelationFilter)
   @IsOptional()
-  @Field(() => StringNullableFilter, {
+  @Field(() => InterviewListRelationFilter, {
     nullable: true,
   })
-  title?: StringNullableFilter;
+  interviews?: InterviewListRelationFilter;
 }
 
 export { JobPositionWhereInput as JobPositionWhereInput };

@@ -18,38 +18,38 @@ import { RecruiterService } from "../recruiter.service";
 const nonExistingId = "nonExistingId";
 const existingId = "existingId";
 const CREATE_INPUT = {
-  createdAt: new Date(),
-  email: "exampleEmail",
-  firstName: "exampleFirstName",
   id: "exampleId",
-  lastName: "exampleLastName",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  firstName: "exampleFirstName",
+  lastName: "exampleLastName",
+  email: "exampleEmail",
 };
 const CREATE_RESULT = {
-  createdAt: new Date(),
-  email: "exampleEmail",
-  firstName: "exampleFirstName",
   id: "exampleId",
-  lastName: "exampleLastName",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  firstName: "exampleFirstName",
+  lastName: "exampleLastName",
+  email: "exampleEmail",
 };
 const FIND_MANY_RESULT = [
   {
-    createdAt: new Date(),
-    email: "exampleEmail",
-    firstName: "exampleFirstName",
     id: "exampleId",
-    lastName: "exampleLastName",
+    createdAt: new Date(),
     updatedAt: new Date(),
+    firstName: "exampleFirstName",
+    lastName: "exampleLastName",
+    email: "exampleEmail",
   },
 ];
 const FIND_ONE_RESULT = {
-  createdAt: new Date(),
-  email: "exampleEmail",
-  firstName: "exampleFirstName",
   id: "exampleId",
-  lastName: "exampleLastName",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  firstName: "exampleFirstName",
+  lastName: "exampleLastName",
+  email: "exampleEmail",
 };
 
 const service = {

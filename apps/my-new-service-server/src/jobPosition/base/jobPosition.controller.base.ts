@@ -36,12 +36,12 @@ export class JobPositionControllerBase {
     return await this.service.createJobPosition({
       data: data,
       select: {
-        createdAt: true,
-        description: true,
         id: true,
-        status: true,
-        title: true,
+        createdAt: true,
         updatedAt: true,
+        title: true,
+        description: true,
+        status: true,
       },
     });
   }
@@ -54,12 +54,12 @@ export class JobPositionControllerBase {
     return this.service.jobPositions({
       ...args,
       select: {
-        createdAt: true,
-        description: true,
         id: true,
-        status: true,
-        title: true,
+        createdAt: true,
         updatedAt: true,
+        title: true,
+        description: true,
+        status: true,
       },
     });
   }
@@ -73,12 +73,12 @@ export class JobPositionControllerBase {
     const result = await this.service.jobPosition({
       where: params,
       select: {
-        createdAt: true,
-        description: true,
         id: true,
-        status: true,
-        title: true,
+        createdAt: true,
         updatedAt: true,
+        title: true,
+        description: true,
+        status: true,
       },
     });
     if (result === null) {
@@ -101,12 +101,12 @@ export class JobPositionControllerBase {
         where: params,
         data: data,
         select: {
-          createdAt: true,
-          description: true,
           id: true,
-          status: true,
-          title: true,
+          createdAt: true,
           updatedAt: true,
+          title: true,
+          description: true,
+          status: true,
         },
       });
     } catch (error) {
@@ -129,12 +129,12 @@ export class JobPositionControllerBase {
       return await this.service.deleteJobPosition({
         where: params,
         select: {
-          createdAt: true,
-          description: true,
           id: true,
-          status: true,
-          title: true,
+          createdAt: true,
           updatedAt: true,
+          title: true,
+          description: true,
+          status: true,
         },
       });
     } catch (error) {
@@ -157,25 +157,24 @@ export class JobPositionControllerBase {
     const results = await this.service.findInterviews(params.id, {
       ...query,
       select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        date: true,
+        feedback: true,
+        interviewer: true,
+
         candidate: {
           select: {
             id: true,
           },
         },
 
-        createdAt: true,
-        date: true,
-        feedback: true,
-        id: true,
-        interviewer: true,
-
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
     if (results === null) {

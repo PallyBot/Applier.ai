@@ -33,12 +33,12 @@ export class RecruiterControllerBase {
     return await this.service.createRecruiter({
       data: data,
       select: {
-        createdAt: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        lastName: true,
+        email: true,
       },
     });
   }
@@ -51,12 +51,12 @@ export class RecruiterControllerBase {
     return this.service.recruiters({
       ...args,
       select: {
-        createdAt: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        lastName: true,
+        email: true,
       },
     });
   }
@@ -70,12 +70,12 @@ export class RecruiterControllerBase {
     const result = await this.service.recruiter({
       where: params,
       select: {
-        createdAt: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        lastName: true,
+        email: true,
       },
     });
     if (result === null) {
@@ -98,12 +98,12 @@ export class RecruiterControllerBase {
         where: params,
         data: data,
         select: {
-          createdAt: true,
-          email: true,
-          firstName: true,
           id: true,
-          lastName: true,
+          createdAt: true,
           updatedAt: true,
+          firstName: true,
+          lastName: true,
+          email: true,
         },
       });
     } catch (error) {
@@ -126,12 +126,12 @@ export class RecruiterControllerBase {
       return await this.service.deleteRecruiter({
         where: params,
         select: {
-          createdAt: true,
-          email: true,
-          firstName: true,
           id: true,
-          lastName: true,
+          createdAt: true,
           updatedAt: true,
+          firstName: true,
+          lastName: true,
+          email: true,
         },
       });
     } catch (error) {

@@ -18,38 +18,38 @@ import { InterviewService } from "../interview.service";
 const nonExistingId = "nonExistingId";
 const existingId = "existingId";
 const CREATE_INPUT = {
+  id: "exampleId",
   createdAt: new Date(),
+  updatedAt: new Date(),
   date: new Date(),
   feedback: "exampleFeedback",
-  id: "exampleId",
   interviewer: "exampleInterviewer",
-  updatedAt: new Date(),
 };
 const CREATE_RESULT = {
+  id: "exampleId",
   createdAt: new Date(),
+  updatedAt: new Date(),
   date: new Date(),
   feedback: "exampleFeedback",
-  id: "exampleId",
   interviewer: "exampleInterviewer",
-  updatedAt: new Date(),
 };
 const FIND_MANY_RESULT = [
   {
+    id: "exampleId",
     createdAt: new Date(),
+    updatedAt: new Date(),
     date: new Date(),
     feedback: "exampleFeedback",
-    id: "exampleId",
     interviewer: "exampleInterviewer",
-    updatedAt: new Date(),
   },
 ];
 const FIND_ONE_RESULT = {
+  id: "exampleId",
   createdAt: new Date(),
+  updatedAt: new Date(),
   date: new Date(),
   feedback: "exampleFeedback",
-  id: "exampleId",
   interviewer: "exampleInterviewer",
-  updatedAt: new Date(),
 };
 
 const service = {
@@ -135,8 +135,8 @@ describe("Interview", () => {
       .expect({
         ...CREATE_RESULT,
         createdAt: CREATE_RESULT.createdAt.toISOString(),
-        date: CREATE_RESULT.date.toISOString(),
         updatedAt: CREATE_RESULT.updatedAt.toISOString(),
+        date: CREATE_RESULT.date.toISOString(),
       });
   });
 
@@ -148,8 +148,8 @@ describe("Interview", () => {
         {
           ...FIND_MANY_RESULT[0],
           createdAt: FIND_MANY_RESULT[0].createdAt.toISOString(),
-          date: FIND_MANY_RESULT[0].date.toISOString(),
           updatedAt: FIND_MANY_RESULT[0].updatedAt.toISOString(),
+          date: FIND_MANY_RESULT[0].date.toISOString(),
         },
       ]);
   });
@@ -172,8 +172,8 @@ describe("Interview", () => {
       .expect({
         ...FIND_ONE_RESULT,
         createdAt: FIND_ONE_RESULT.createdAt.toISOString(),
-        date: FIND_ONE_RESULT.date.toISOString(),
         updatedAt: FIND_ONE_RESULT.updatedAt.toISOString(),
+        date: FIND_ONE_RESULT.date.toISOString(),
       });
   });
 
@@ -186,8 +186,8 @@ describe("Interview", () => {
       .expect({
         ...CREATE_RESULT,
         createdAt: CREATE_RESULT.createdAt.toISOString(),
-        date: CREATE_RESULT.date.toISOString(),
         updatedAt: CREATE_RESULT.updatedAt.toISOString(),
+        date: CREATE_RESULT.date.toISOString(),
       })
       .then(function () {
         agent

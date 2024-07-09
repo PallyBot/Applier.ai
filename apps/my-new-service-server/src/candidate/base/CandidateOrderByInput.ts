@@ -28,6 +28,17 @@ class CandidateOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
+  id?: SortOrder;
+
+  @ApiProperty({
+    required: false,
+    enum: ["asc", "desc"],
+  })
+  @IsOptional()
+  @IsEnum(SortOrder)
+  @Field(() => SortOrder, {
+    nullable: true,
+  })
   createdAt?: SortOrder;
 
   @ApiProperty({
@@ -39,18 +50,7 @@ class CandidateOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  domainExpertise?: SortOrder;
-
-  @ApiProperty({
-    required: false,
-    enum: ["asc", "desc"],
-  })
-  @IsOptional()
-  @IsEnum(SortOrder)
-  @Field(() => SortOrder, {
-    nullable: true,
-  })
-  email?: SortOrder;
+  updatedAt?: SortOrder;
 
   @ApiProperty({
     required: false,
@@ -72,18 +72,7 @@ class CandidateOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  id?: SortOrder;
-
-  @ApiProperty({
-    required: false,
-    enum: ["asc", "desc"],
-  })
-  @IsOptional()
-  @IsEnum(SortOrder)
-  @Field(() => SortOrder, {
-    nullable: true,
-  })
-  lastName?: SortOrder;
+  email?: SortOrder;
 
   @ApiProperty({
     required: false,
@@ -105,6 +94,17 @@ class CandidateOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
+  lastName?: SortOrder;
+
+  @ApiProperty({
+    required: false,
+    enum: ["asc", "desc"],
+  })
+  @IsOptional()
+  @IsEnum(SortOrder)
+  @Field(() => SortOrder, {
+    nullable: true,
+  })
   skills?: SortOrder;
 
   @ApiProperty({
@@ -116,7 +116,7 @@ class CandidateOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  updatedAt?: SortOrder;
+  domainExpertise?: SortOrder;
 
   @ApiProperty({
     required: false,

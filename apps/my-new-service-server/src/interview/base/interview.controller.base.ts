@@ -47,25 +47,24 @@ export class InterviewControllerBase {
           : undefined,
       },
       select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        date: true,
+        feedback: true,
+        interviewer: true,
+
         candidate: {
           select: {
             id: true,
           },
         },
 
-        createdAt: true,
-        date: true,
-        feedback: true,
-        id: true,
-        interviewer: true,
-
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
   }
@@ -78,25 +77,24 @@ export class InterviewControllerBase {
     return this.service.interviews({
       ...args,
       select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        date: true,
+        feedback: true,
+        interviewer: true,
+
         candidate: {
           select: {
             id: true,
           },
         },
 
-        createdAt: true,
-        date: true,
-        feedback: true,
-        id: true,
-        interviewer: true,
-
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
   }
@@ -110,25 +108,24 @@ export class InterviewControllerBase {
     const result = await this.service.interview({
       where: params,
       select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        date: true,
+        feedback: true,
+        interviewer: true,
+
         candidate: {
           select: {
             id: true,
           },
         },
 
-        createdAt: true,
-        date: true,
-        feedback: true,
-        id: true,
-        interviewer: true,
-
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
     if (result === null) {
@@ -165,25 +162,24 @@ export class InterviewControllerBase {
             : undefined,
         },
         select: {
+          id: true,
+          createdAt: true,
+          updatedAt: true,
+          date: true,
+          feedback: true,
+          interviewer: true,
+
           candidate: {
             select: {
               id: true,
             },
           },
 
-          createdAt: true,
-          date: true,
-          feedback: true,
-          id: true,
-          interviewer: true,
-
           jobPosition: {
             select: {
               id: true,
             },
           },
-
-          updatedAt: true,
         },
       });
     } catch (error) {
@@ -206,25 +202,24 @@ export class InterviewControllerBase {
       return await this.service.deleteInterview({
         where: params,
         select: {
+          id: true,
+          createdAt: true,
+          updatedAt: true,
+          date: true,
+          feedback: true,
+          interviewer: true,
+
           candidate: {
             select: {
               id: true,
             },
           },
 
-          createdAt: true,
-          date: true,
-          feedback: true,
-          id: true,
-          interviewer: true,
-
           jobPosition: {
             select: {
               id: true,
             },
           },
-
-          updatedAt: true,
         },
       });
     } catch (error) {

@@ -4,10 +4,10 @@ import {
   Edit,
   SimpleForm,
   EditProps,
-  ReferenceInput,
-  SelectInput,
   DateTimeInput,
   TextInput,
+  ReferenceInput,
+  SelectInput,
 } from "react-admin";
 
 import { CandidateTitle } from "../candidate/CandidateTitle";
@@ -17,6 +17,9 @@ export const InterviewEdit = (props: EditProps): React.ReactElement => {
   return (
     <Edit {...props}>
       <SimpleForm>
+        <DateTimeInput label="date" source="date" />
+        <TextInput label="feedback" multiline source="feedback" />
+        <TextInput label="interviewer" source="interviewer" />
         <ReferenceInput
           source="candidate.id"
           reference="Candidate"
@@ -24,9 +27,6 @@ export const InterviewEdit = (props: EditProps): React.ReactElement => {
         >
           <SelectInput optionText={CandidateTitle} />
         </ReferenceInput>
-        <DateTimeInput label="date" source="date" />
-        <TextInput label="feedback" multiline source="feedback" />
-        <TextInput label="interviewer" source="interviewer" />
         <ReferenceInput
           source="jobPosition.id"
           reference="JobPosition"

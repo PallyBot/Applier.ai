@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
-import { CreateApplicationInput } from "../application/CreateApplicationInput";
-import { ApplicationOutput } from "../application/ApplicationOutput";
+import { CreateApplicationInput } from "./CreateApplicationInput";
+import { ApplicationOutput } from "./ApplicationOutput";
 
 @Injectable()
 export class ApplicationService {

@@ -1,6 +1,6 @@
 import * as graphql from "@nestjs/graphql";
-import { CreateApplicationInput } from "../application/CreateApplicationInput";
-import { ApplicationOutput } from "../application/ApplicationOutput";
+import { CreateApplicationInput } from "./CreateApplicationInput";
+import { ApplicationOutput } from "./ApplicationOutput";
 import { ApplicationService } from "./application.service";
 
 export class ApplicationResolver {

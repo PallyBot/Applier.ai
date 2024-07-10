@@ -2,7 +2,7 @@ import * as common from "@nestjs/common";
 import * as swagger from "@nestjs/swagger";
 import * as errors from "../errors";
 import { ApplicationService } from "./application.service";
-import { ApplicationOutput } from "../application/ApplicationOutput";
+import { ApplicationOutput } from "./ApplicationOutput";
 
 @swagger.ApiTags("applications")
 @common.Controller("applications")

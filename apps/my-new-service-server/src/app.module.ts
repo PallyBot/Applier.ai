@@ -16,7 +16,7 @@ import { RecruiterModule } from "./recruiter/recruiter.module";
 import { CandidateModule } from "./candidate/candidate.module";
 import { JobPositionModule } from "./jobPosition/jobPosition.module";
 import { InterviewModule } from "./interview/interview.module";
-import { ApplicationModule } from "./Application/application.module";
+import { ApplicationModule } from "./application/application.module";
 import { TaskSchedulerModule } from "./TaskScheduler/taskscheduler.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";

@@ -1,6 +1,6 @@
 import * as graphql from "@nestjs/graphql";
-import { CreateApplicationInput } from "../application/CreateApplicationInput";
-import { ApplicationOutput } from "../application/ApplicationOutput";
+import { CreateApplicationInput } from "./CreateApplicationInput";
+import { ApplicationOutput } from "./ApplicationOutput";
 import { ApplicationService } from "./application.service";
 
 export class ApplicationResolver {
@@ -16,7 +16,7 @@ export class ApplicationResolver {
 
   @graphql.Query(() => [ApplicationOutput])
   async ListApplications(
-    @graphql.Args()
+    @graphql.Args('args')
     args: string
   ): Promise<ApplicationOutput[]> {
     return this.service.ListApplications(args);

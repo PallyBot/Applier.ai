@@ -2,7 +2,8 @@ import * as common from "@nestjs/common";
 import * as swagger from "@nestjs/swagger";
 import * as errors from "../errors";
 import { ApplicationService } from "./application.service";
-import { ApplicationOutput } from "../application/ApplicationOutput";
+import { ApplicationOutput } from "./ApplicationOutput";
+import { CreateApplicationInput } from "./CreateApplicationInput";
 
 @swagger.ApiTags("applications")
 @common.Controller("applications")
@@ -21,7 +22,7 @@ export class ApplicationController {
   })
   async CreateApplication(
     @common.Body()
-    body: string
+    body: CreateApplicationInput
   ): Promise<ApplicationOutput> {
         return this.service.CreateApplication(body);
       }

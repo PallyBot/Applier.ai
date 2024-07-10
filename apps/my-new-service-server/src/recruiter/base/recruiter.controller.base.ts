@@ -27,6 +27,9 @@ export class RecruiterControllerBase {
   constructor(protected readonly service: RecruiterService) {}
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Recruiter })
+  @swagger.ApiBody({
+    type: RecruiterCreateInput,
+  })
   async createRecruiter(
     @common.Body() data: RecruiterCreateInput
   ): Promise<Recruiter> {
@@ -89,6 +92,9 @@ export class RecruiterControllerBase {
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Recruiter })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @swagger.ApiBody({
+    type: RecruiterUpdateInput,
+  })
   async updateRecruiter(
     @common.Param() params: RecruiterWhereUniqueInput,
     @common.Body() data: RecruiterUpdateInput

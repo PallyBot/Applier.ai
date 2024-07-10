@@ -27,6 +27,9 @@ export class InterviewControllerBase {
   constructor(protected readonly service: InterviewService) {}
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Interview })
+  @swagger.ApiBody({
+    type: InterviewCreateInput,
+  })
   async createInterview(
     @common.Body() data: InterviewCreateInput
   ): Promise<Interview> {
@@ -139,6 +142,9 @@ export class InterviewControllerBase {
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Interview })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @swagger.ApiBody({
+    type: InterviewUpdateInput,
+  })
   async updateInterview(
     @common.Param() params: InterviewWhereUniqueInput,
     @common.Body() data: InterviewUpdateInput

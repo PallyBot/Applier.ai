@@ -30,6 +30,9 @@ export class CandidateControllerBase {
   constructor(protected readonly service: CandidateService) {}
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Candidate })
+  @swagger.ApiBody({
+    type: CandidateCreateInput,
+  })
   async createCandidate(
     @common.Body() data: CandidateCreateInput
   ): Promise<Candidate> {
@@ -104,6 +107,9 @@ export class CandidateControllerBase {
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Candidate })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @swagger.ApiBody({
+    type: CandidateUpdateInput,
+  })
   async updateCandidate(
     @common.Param() params: CandidateWhereUniqueInput,
     @common.Body() data: CandidateUpdateInput

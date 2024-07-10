@@ -30,6 +30,9 @@ export class JobPositionControllerBase {
   constructor(protected readonly service: JobPositionService) {}
   @common.Post()
   @swagger.ApiCreatedResponse({ type: JobPosition })
+  @swagger.ApiBody({
+    type: JobPositionCreateInput,
+  })
   async createJobPosition(
     @common.Body() data: JobPositionCreateInput
   ): Promise<JobPosition> {
@@ -92,6 +95,9 @@ export class JobPositionControllerBase {
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: JobPosition })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @swagger.ApiBody({
+    type: JobPositionUpdateInput,
+  })
   async updateJobPosition(
     @common.Param() params: JobPositionWhereUniqueInput,
     @common.Body() data: JobPositionUpdateInput

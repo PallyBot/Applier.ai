@@ -16,7 +16,7 @@ export class ApplicationResolver {
 
   @graphql.Query(() => [ApplicationOutput])
   async ListApplications(
-    @graphql.Args()
+    @graphql.Args('args')
     args: string
   ): Promise<ApplicationOutput[]> {
     return this.service.ListApplications(args);

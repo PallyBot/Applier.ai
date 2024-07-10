@@ -15,7 +15,6 @@ import {
   IsString,
   MaxLength,
   IsOptional,
-  ValidateNested,
   IsInt,
   Min,
   Max,
@@ -23,8 +22,6 @@ import {
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
-import { InterviewCreateNestedManyWithoutCandidatesInput } from "./InterviewCreateNestedManyWithoutCandidatesInput";
-import { Type } from "class-transformer";
 
 @InputType()
 class CandidateCreateInput {
@@ -72,18 +69,6 @@ class CandidateCreateInput {
     nullable: true,
   })
   lastName?: string | null;
-
-  @ApiProperty({
-    required: false,
-    type: () => InterviewCreateNestedManyWithoutCandidatesInput,
-  })
-  @ValidateNested()
-  @Type(() => InterviewCreateNestedManyWithoutCandidatesInput)
-  @IsOptional()
-  @Field(() => InterviewCreateNestedManyWithoutCandidatesInput, {
-    nullable: true,
-  })
-  interviews?: InterviewCreateNestedManyWithoutCandidatesInput;
 
   @ApiProperty({
     required: false,

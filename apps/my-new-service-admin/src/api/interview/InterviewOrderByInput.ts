@@ -7,6 +7,6 @@ export type InterviewOrderByInput = {
   date?: SortOrder;
   feedback?: SortOrder;
   interviewer?: SortOrder;
-  candidateId?: SortOrder;
+  candidate?: SortOrder;
   jobPositionId?: SortOrder;
 };

@@ -20,7 +20,6 @@ import { InterviewFindUniqueArgs } from "./InterviewFindUniqueArgs";
 import { CreateInterviewArgs } from "./CreateInterviewArgs";
 import { UpdateInterviewArgs } from "./UpdateInterviewArgs";
 import { DeleteInterviewArgs } from "./DeleteInterviewArgs";
-import { Candidate } from "../../candidate/base/Candidate";
 import { JobPosition } from "../../jobPosition/base/JobPosition";
 import { InterviewService } from "../interview.service";
 @graphql.Resolver(() => Interview)
@@ -63,12 +62,6 @@ export class InterviewResolverBase {
       data: {
         ...args.data,
 
-        candidate: args.data.candidate
-          ? {
-              connect: args.data.candidate,
-            }
-          : undefined,
-
         jobPosition: args.data.jobPosition
           ? {
               connect: args.data.jobPosition,
@@ -87,12 +80,6 @@ export class InterviewResolverBase {
         ...args,
         data: {
           ...args.data,
-
-          candidate: args.data.candidate
-            ? {
-                connect: args.data.candidate,
-              }
-            : undefined,
 
           jobPosition: args.data.jobPosition
             ? {
@@ -125,21 +112,6 @@ export class InterviewResolverBase {
       }
       throw error;
     }
-  }
-
-  @graphql.ResolveField(() => Candidate, {
-    nullable: true,
-    name: "candidate",
-  })
-  async getCandidate(
-    @graphql.Parent() parent: Interview
-  ): Promise<Candidate | null> {
-    const result = await this.service.getCandidate(parent.id);
-
-    if (!result) {
-      return null;
-    }
-    return result;
   }
 
   @graphql.ResolveField(() => JobPosition, {

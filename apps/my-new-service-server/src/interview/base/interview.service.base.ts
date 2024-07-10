@@ -10,11 +10,9 @@ https://docs.amplication.com/how-to/custom-code
 ------------------------------------------------------------------------------
   */
 import { PrismaService } from "../../prisma/prisma.service";
-
 import {
   Prisma,
   Interview as PrismaInterview,
-  Candidate as PrismaCandidate,
   JobPosition as PrismaJobPosition,
 } from "@prisma/client";
 
@@ -51,14 +49,6 @@ export class InterviewServiceBase {
     args: Prisma.InterviewDeleteArgs
   ): Promise<PrismaInterview> {
     return this.prisma.interview.delete(args);
-  }
-
-  async getCandidate(parentId: string): Promise<PrismaCandidate | null> {
-    return this.prisma.interview
-      .findUnique({
-        where: { id: parentId },
-      })
-      .candidate();
   }
 
   async getJobPosition(parentId: string): Promise<PrismaJobPosition | null> {

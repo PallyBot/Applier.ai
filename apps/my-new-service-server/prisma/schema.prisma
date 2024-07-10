@@ -7,6 +7,19 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Candidate {
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  firstName         String?
+  email             String?
+  resume            Json?
+  lastName          String?
+  skills            String?
+  domainExpertise   String?
+  yearsOfExperience Int?
+}
+
 model Recruiter {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
@@ -16,18 +29,16 @@ model Recruiter {
   email     String?
 }
 
-model Candidate {
-  id                String      @id @default(cuid())
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  firstName         String?
-  email             String?
-  resume            Json?
-  lastName          String?
-  interviews        Interview[]
-  skills            String?
-  domainExpertise   String?
-  yearsOfExperience Int?
+model Interview {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  date          DateTime?
+  feedback      String?
+  interviewer   String?
+  candidate     String?
+  jobPosition   JobPosition? @relation(fields: [jobPositionId], references: [id])
+  jobPositionId String?
 }
 
 model JobPosition {
@@ -40,19 +51,96 @@ model JobPosition {
   interviews  Interview[]
 }
 
-model Interview {
+model Message {
   id            String       @id @default(cuid())
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
-  date          DateTime?
-  feedback      String?
-  interviewer   String?
-  candidate     Candidate?   @relation(fields: [candidateId], references: [id])
-  candidateId   String?
-  jobPosition   JobPosition? @relation(fields: [jobPositionId], references: [id])
-  jobPositionId String?
+  content       String?
+  senderId      String?
+  interaction   Interaction? @relation(fields: [interactionId], references: [id])
+  interactionId String?
+}
+
+model Interaction {
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  interactionType String?
+  timestamp       DateTime?
+  voiceRecordings VoiceRecording[]
+  messages        Message[]
+}
+
+model JobRequirement {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  title       String?
+  description String?
+  createdBy   String?
+  attachments Attachment[]
+}
+
+model Attachment {
+  id               String          @id @default(cuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  fileUrl          String?
+  fileType         String?
+  jobRequirement   JobRequirement? @relation(fields: [jobRequirementId], references: [id])
+  jobRequirementId String?
+}
+
+model VoiceRecording {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  fileUrl       String?
+  duration      Int?
+  interaction   Interaction? @relation(fields: [interactionId], references: [id])
+  interactionId String?
+}
+
+model CandidateScore {
+  id                 String            @id @default(cuid())
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  candidateId        String?
+  score              Float?
+  rankingAlgorithm   RankingAlgorithm? @relation(fields: [rankingAlgorithmId], references: [id])
+  rankingAlgorithmId String?
+}
+
+model RankingAlgorithm {
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String?
+  description     String?
+  candidateScores CandidateScore[]
+}
+
+model CandidateApplication {
+  id          String                          @id @default(cuid())
+  createdAt   DateTime                        @default(now())
+  updatedAt   DateTime                        @updatedAt
+  candidateId String?
+  jobId       String?
+  status      EnumCandidateApplicationStatus?
+}
+
+model Resume {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  fileUrl    String?
+  resumeText String?
 }
 
 enum EnumJobPositionStatus {
+  Option1
+}
+
+enum EnumCandidateApplicationStatus {
   Option1
 }

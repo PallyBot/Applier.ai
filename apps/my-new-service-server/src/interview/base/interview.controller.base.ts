@@ -37,12 +37,6 @@ export class InterviewControllerBase {
       data: {
         ...data,
 
-        candidate: data.candidate
-          ? {
-              connect: data.candidate,
-            }
-          : undefined,
-
         jobPosition: data.jobPosition
           ? {
               connect: data.jobPosition,
@@ -56,12 +50,7 @@ export class InterviewControllerBase {
         date: true,
         feedback: true,
         interviewer: true,
-
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
+        candidate: true,
 
         jobPosition: {
           select: {
@@ -86,12 +75,7 @@ export class InterviewControllerBase {
         date: true,
         feedback: true,
         interviewer: true,
-
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
+        candidate: true,
 
         jobPosition: {
           select: {
@@ -117,12 +101,7 @@ export class InterviewControllerBase {
         date: true,
         feedback: true,
         interviewer: true,
-
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
+        candidate: true,
 
         jobPosition: {
           select: {
@@ -155,12 +134,6 @@ export class InterviewControllerBase {
         data: {
           ...data,
 
-          candidate: data.candidate
-            ? {
-                connect: data.candidate,
-              }
-            : undefined,
-
           jobPosition: data.jobPosition
             ? {
                 connect: data.jobPosition,
@@ -174,12 +147,7 @@ export class InterviewControllerBase {
           date: true,
           feedback: true,
           interviewer: true,
-
-          candidate: {
-            select: {
-              id: true,
-            },
-          },
+          candidate: true,
 
           jobPosition: {
             select: {
@@ -214,12 +182,7 @@ export class InterviewControllerBase {
           date: true,
           feedback: true,
           interviewer: true,
-
-          candidate: {
-            select: {
-              id: true,
-            },
-          },
+          candidate: true,
 
           jobPosition: {
             select: {

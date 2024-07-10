@@ -8,7 +8,6 @@ import {
   ReferenceField,
 } from "react-admin";
 import Pagination from "../Components/Pagination";
-import { CANDIDATE_TITLE_FIELD } from "../candidate/CandidateTitle";
 import { JOBPOSITION_TITLE_FIELD } from "../jobPosition/JobPositionTitle";
 
 export const InterviewList = (props: ListProps): React.ReactElement => {
@@ -27,13 +26,7 @@ export const InterviewList = (props: ListProps): React.ReactElement => {
         <TextField label="date" source="date" />
         <TextField label="feedback" source="feedback" />
         <TextField label="interviewer" source="interviewer" />
-        <ReferenceField
-          label="candidate"
-          source="candidate.id"
-          reference="Candidate"
-        >
-          <TextField source={CANDIDATE_TITLE_FIELD} />
-        </ReferenceField>
+        <TextField label="candidate" source="candidate" />
         <ReferenceField
           label="jobPosition"
           source="jobposition.id"

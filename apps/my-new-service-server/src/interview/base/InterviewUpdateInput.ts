@@ -19,7 +19,6 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { CandidateWhereUniqueInput } from "../../candidate/base/CandidateWhereUniqueInput";
 import { JobPositionWhereUniqueInput } from "../../jobPosition/base/JobPositionWhereUniqueInput";
 
 @InputType()
@@ -61,15 +60,14 @@ class InterviewUpdateInput {
 
   @ApiProperty({
     required: false,
-    type: () => CandidateWhereUniqueInput,
+    type: String,
   })
-  @ValidateNested()
-  @Type(() => CandidateWhereUniqueInput)
+  @IsString()
   @IsOptional()
-  @Field(() => CandidateWhereUniqueInput, {
+  @Field(() => String, {
     nullable: true,
   })
-  candidate?: CandidateWhereUniqueInput | null;
+  candidate?: string | null;
 
   @ApiProperty({
     required: false,

@@ -169,12 +169,7 @@ export class JobPositionControllerBase {
         date: true,
         feedback: true,
         interviewer: true,
-
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
+        candidate: true,
 
         jobPosition: {
           select: {

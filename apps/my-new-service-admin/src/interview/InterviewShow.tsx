@@ -7,7 +7,6 @@ import {
   DateField,
   ReferenceField,
 } from "react-admin";
-import { CANDIDATE_TITLE_FIELD } from "../candidate/CandidateTitle";
 import { JOBPOSITION_TITLE_FIELD } from "../jobPosition/JobPositionTitle";
 
 export const InterviewShow = (props: ShowProps): React.ReactElement => {
@@ -20,13 +19,7 @@ export const InterviewShow = (props: ShowProps): React.ReactElement => {
         <TextField label="date" source="date" />
         <TextField label="feedback" source="feedback" />
         <TextField label="interviewer" source="interviewer" />
-        <ReferenceField
-          label="candidate"
-          source="candidate.id"
-          reference="Candidate"
-        >
-          <TextField source={CANDIDATE_TITLE_FIELD} />
-        </ReferenceField>
+        <TextField label="candidate" source="candidate" />
         <ReferenceField
           label="jobPosition"
           source="jobposition.id"

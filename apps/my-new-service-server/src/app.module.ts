@@ -12,12 +12,25 @@ import {
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
-import { RecruiterModule } from "./recruiter/recruiter.module";
 import { CandidateModule } from "./candidate/candidate.module";
-import { JobPositionModule } from "./jobPosition/jobPosition.module";
+import { RecruiterModule } from "./recruiter/recruiter.module";
 import { InterviewModule } from "./interview/interview.module";
+import { JobPositionModule } from "./jobPosition/jobPosition.module";
+import { MessageModule } from "./message/message.module";
+import { InteractionModule } from "./interaction/interaction.module";
+import { JobRequirementModule } from "./jobRequirement/jobRequirement.module";
+import { AttachmentModule } from "./attachment/attachment.module";
+import { VoiceRecordingModule } from "./voiceRecording/voiceRecording.module";
+import { CandidateScoreModule } from "./candidateScore/candidateScore.module";
+import { RankingAlgorithmModule } from "./rankingAlgorithm/rankingAlgorithm.module";
+import { CandidateApplicationModule } from "./candidateApplication/candidateApplication.module";
+import { ResumeModule } from "./resume/resume.module";
 import { ApplicationModule } from "./Application/application.module";
+import { AtsModule } from "./Ats/ats.module";
+import { CandidateRankingModule } from "./CandidateRanking/candidateranking.module";
+import { JobUploadModule } from "./JobUpload/jobupload.module";
 import { TaskSchedulerModule } from "./TaskScheduler/taskscheduler.module";
+import { UserInteractionModule } from "./UserInteraction/userinteraction.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
@@ -35,12 +48,25 @@ import { LoggerModule } from "./logger/logger.module";
   imports: [
     KafkaModule,
     LoggerModule,
-    RecruiterModule,
     CandidateModule,
-    JobPositionModule,
+    RecruiterModule,
     InterviewModule,
+    JobPositionModule,
+    MessageModule,
+    InteractionModule,
+    JobRequirementModule,
+    AttachmentModule,
+    VoiceRecordingModule,
+    CandidateScoreModule,
+    RankingAlgorithmModule,
+    CandidateApplicationModule,
+    ResumeModule,
     ApplicationModule,
+    AtsModule,
+    CandidateRankingModule,
+    JobUploadModule,
     TaskSchedulerModule,
+    UserInteractionModule,
     HealthModule,
     PrismaModule,
     SecretsManagerModule,

@@ -1,5 +1,4 @@
 import { JsonValue } from "type-fest";
-import { Interview } from "../interview/Interview";
 
 export type Candidate = {
   id: string;
@@ -9,7 +8,6 @@ export type Candidate = {
   email: string | null;
   resume: JsonValue;
   lastName: string | null;
-  interviews?: Array<Interview>;
   skills: string | null;
   domainExpertise: string | null;
   yearsOfExperience: number | null;

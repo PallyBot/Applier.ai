@@ -13,10 +13,9 @@ import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import { StringFilter } from "../../util/StringFilter";
 import { Type } from "class-transformer";
-import { IsOptional, ValidateNested } from "class-validator";
+import { IsOptional } from "class-validator";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { JsonFilter } from "../../util/JsonFilter";
-import { InterviewListRelationFilter } from "../../interview/base/InterviewListRelationFilter";
 import { IntNullableFilter } from "../../util/IntNullableFilter";
 
 @InputType()
@@ -75,18 +74,6 @@ class CandidateWhereInput {
     nullable: true,
   })
   lastName?: StringNullableFilter;
-
-  @ApiProperty({
-    required: false,
-    type: () => InterviewListRelationFilter,
-  })
-  @ValidateNested()
-  @Type(() => InterviewListRelationFilter)
-  @IsOptional()
-  @Field(() => InterviewListRelationFilter, {
-    nullable: true,
-  })
-  interviews?: InterviewListRelationFilter;
 
   @ApiProperty({
     required: false,

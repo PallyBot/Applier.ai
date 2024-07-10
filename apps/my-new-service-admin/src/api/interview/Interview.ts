@@ -1,4 +1,3 @@
-import { Candidate } from "../candidate/Candidate";
 import { JobPosition } from "../jobPosition/JobPosition";
 
 export type Interview = {
@@ -8,6 +7,6 @@ export type Interview = {
   date: Date | null;
   feedback: string | null;
   interviewer: string | null;
-  candidate?: Candidate | null;
+  candidate: string | null;
   jobPosition?: JobPosition | null;
 };

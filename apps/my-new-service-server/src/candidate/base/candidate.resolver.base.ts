@@ -20,8 +20,6 @@ import { CandidateFindUniqueArgs } from "./CandidateFindUniqueArgs";
 import { CreateCandidateArgs } from "./CreateCandidateArgs";
 import { UpdateCandidateArgs } from "./UpdateCandidateArgs";
 import { DeleteCandidateArgs } from "./DeleteCandidateArgs";
-import { InterviewFindManyArgs } from "../../interview/base/InterviewFindManyArgs";
-import { Interview } from "../../interview/base/Interview";
 import { CandidateService } from "../candidate.service";
 @graphql.Resolver(() => Candidate)
 export class CandidateResolverBase {
@@ -97,19 +95,5 @@ export class CandidateResolverBase {
       }
       throw error;
     }
-  }
-
-  @graphql.ResolveField(() => [Interview], { name: "interviews" })
-  async findInterviews(
-    @graphql.Parent() parent: Candidate,
-    @graphql.Args() args: InterviewFindManyArgs
-  ): Promise<Interview[]> {
-    const results = await this.service.findInterviews(parent.id, args);
-
-    if (!results) {
-      return [];
-    }
-
-    return results;
   }
 }

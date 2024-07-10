@@ -16,7 +16,6 @@ import { Type } from "class-transformer";
 import { IsOptional, ValidateNested } from "class-validator";
 import { DateTimeNullableFilter } from "../../util/DateTimeNullableFilter";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
-import { CandidateWhereUniqueInput } from "../../candidate/base/CandidateWhereUniqueInput";
 import { JobPositionWhereUniqueInput } from "../../jobPosition/base/JobPositionWhereUniqueInput";
 
 @InputType()
@@ -67,15 +66,14 @@ class InterviewWhereInput {
 
   @ApiProperty({
     required: false,
-    type: () => CandidateWhereUniqueInput,
+    type: StringNullableFilter,
   })
-  @ValidateNested()
-  @Type(() => CandidateWhereUniqueInput)
+  @Type(() => StringNullableFilter)
   @IsOptional()
-  @Field(() => CandidateWhereUniqueInput, {
+  @Field(() => StringNullableFilter, {
     nullable: true,
   })
-  candidate?: CandidateWhereUniqueInput;
+  candidate?: StringNullableFilter;
 
   @ApiProperty({
     required: false,

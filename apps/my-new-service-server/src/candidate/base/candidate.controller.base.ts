@@ -22,9 +22,6 @@ import { Candidate } from "./Candidate";
 import { CandidateFindManyArgs } from "./CandidateFindManyArgs";
 import { CandidateWhereUniqueInput } from "./CandidateWhereUniqueInput";
 import { CandidateUpdateInput } from "./CandidateUpdateInput";
-import { InterviewFindManyArgs } from "../../interview/base/InterviewFindManyArgs";
-import { Interview } from "../../interview/base/Interview";
-import { InterviewWhereUniqueInput } from "../../interview/base/InterviewWhereUniqueInput";
 
 export class CandidateControllerBase {
   constructor(protected readonly service: CandidateService) {}
@@ -171,94 +168,5 @@ export class CandidateControllerBase {
       }
       throw error;
     }
-  }
-
-  @common.Get("/:id/interviews")
-  @ApiNestedQuery(InterviewFindManyArgs)
-  async findInterviews(
-    @common.Req() request: Request,
-    @common.Param() params: CandidateWhereUniqueInput
-  ): Promise<Interview[]> {
-    const query = plainToClass(InterviewFindManyArgs, request.query);
-    const results = await this.service.findInterviews(params.id, {
-      ...query,
-      select: {
-        id: true,
-        createdAt: true,
-        updatedAt: true,
-        date: true,
-        feedback: true,
-        interviewer: true,
-
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
-
-        jobPosition: {
-          select: {
-            id: true,
-          },
-        },
-      },
-    });
-    if (results === null) {
-      throw new errors.NotFoundException(
-        `No resource was found for ${JSON.stringify(params)}`
-      );
-    }
-    return results;
-  }
-
-  @common.Post("/:id/interviews")
-  async connectInterviews(
-    @common.Param() params: CandidateWhereUniqueInput,
-    @common.Body() body: InterviewWhereUniqueInput[]
-  ): Promise<void> {
-    const data = {
-      interviews: {
-        connect: body,
-      },
-    };
-    await this.service.updateCandidate({
-      where: params,
-      data,
-      select: { id: true },
-    });
-  }
-
-  @common.Patch("/:id/interviews")
-  async updateInterviews(
-    @common.Param() params: CandidateWhereUniqueInput,
-    @common.Body() body: InterviewWhereUniqueInput[]
-  ): Promise<void> {
-    const data = {
-      interviews: {
-        set: body,
-      },
-    };
-    await this.service.updateCandidate({
-      where: params,
-      data,
-      select: { id: true },
-    });
-  }
-
-  @common.Delete("/:id/interviews")
-  async disconnectInterviews(
-    @common.Param() params: CandidateWhereUniqueInput,
-    @common.Body() body: InterviewWhereUniqueInput[]
-  ): Promise<void> {
-    const data = {
-      interviews: {
-        disconnect: body,
-      },
-    };
-    await this.service.updateCandidate({
-      where: params,
-      data,
-      select: { id: true },
-    });
   }
 }

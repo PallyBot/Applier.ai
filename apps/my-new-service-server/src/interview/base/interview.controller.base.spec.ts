@@ -24,6 +24,7 @@ const CREATE_INPUT = {
   date: new Date(),
   feedback: "exampleFeedback",
   interviewer: "exampleInterviewer",
+  candidate: "exampleCandidate",
 };
 const CREATE_RESULT = {
   id: "exampleId",
@@ -32,6 +33,7 @@ const CREATE_RESULT = {
   date: new Date(),
   feedback: "exampleFeedback",
   interviewer: "exampleInterviewer",
+  candidate: "exampleCandidate",
 };
 const FIND_MANY_RESULT = [
   {
@@ -41,6 +43,7 @@ const FIND_MANY_RESULT = [
     date: new Date(),
     feedback: "exampleFeedback",
     interviewer: "exampleInterviewer",
+    candidate: "exampleCandidate",
   },
 ];
 const FIND_ONE_RESULT = {
@@ -50,6 +53,7 @@ const FIND_ONE_RESULT = {
   date: new Date(),
   feedback: "exampleFeedback",
   interviewer: "exampleInterviewer",
+  candidate: "exampleCandidate",
 };
 
 const service = {

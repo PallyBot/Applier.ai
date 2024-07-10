@@ -16,7 +16,6 @@ import {
   IsDate,
   MaxLength,
   IsOptional,
-  ValidateNested,
   IsInt,
   Min,
   Max,
@@ -25,7 +24,6 @@ import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { JsonValue } from "type-fest";
-import { Interview } from "../../interview/base/Interview";
 
 @ObjectType()
 class Candidate {
@@ -97,15 +95,6 @@ class Candidate {
     nullable: true,
   })
   lastName!: string | null;
-
-  @ApiProperty({
-    required: false,
-    type: () => [Interview],
-  })
-  @ValidateNested()
-  @Type(() => Interview)
-  @IsOptional()
-  interviews?: Array<Interview>;
 
   @ApiProperty({
     required: false,

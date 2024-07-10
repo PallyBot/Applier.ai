@@ -94,7 +94,7 @@ class InterviewOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  candidateId?: SortOrder;
+  candidate?: SortOrder;
 
   @ApiProperty({
     required: false,

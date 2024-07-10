@@ -19,7 +19,6 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { Candidate } from "../../candidate/base/Candidate";
 import { JobPosition } from "../../jobPosition/base/JobPosition";
 
 @ObjectType()
@@ -85,12 +84,14 @@ class Interview {
 
   @ApiProperty({
     required: false,
-    type: () => Candidate,
+    type: String,
   })
-  @ValidateNested()
-  @Type(() => Candidate)
+  @IsString()
   @IsOptional()
-  candidate?: Candidate | null;
+  @Field(() => String, {
+    nullable: true,
+  })
+  candidate!: string | null;
 
   @ApiProperty({
     required: false,

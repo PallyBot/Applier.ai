@@ -11,27 +11,25 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { CandidateWhereUniqueInput } from "../../candidate/base/CandidateWhereUniqueInput";
-import { ValidateNested, IsOptional } from "class-validator";
+import { StringFilter } from "../../util/StringFilter";
 import { Type } from "class-transformer";
+import { IsOptional, ValidateNested } from "class-validator";
 import { DateTimeNullableFilter } from "../../util/DateTimeNullableFilter";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
-import { StringFilter } from "../../util/StringFilter";
 import { JobPositionWhereUniqueInput } from "../../jobPosition/base/JobPositionWhereUniqueInput";
 
 @InputType()
 class InterviewWhereInput {
   @ApiProperty({
     required: false,
-    type: () => CandidateWhereUniqueInput,
+    type: StringFilter,
   })
-  @ValidateNested()
-  @Type(() => CandidateWhereUniqueInput)
+  @Type(() => StringFilter)
   @IsOptional()
-  @Field(() => CandidateWhereUniqueInput, {
+  @Field(() => StringFilter, {
     nullable: true,
   })
-  candidate?: CandidateWhereUniqueInput;
+  id?: StringFilter;
 
   @ApiProperty({
     required: false,
@@ -57,14 +55,14 @@ class InterviewWhereInput {
 
   @ApiProperty({
     required: false,
-    type: StringFilter,
+    type: StringNullableFilter,
   })
-  @Type(() => StringFilter)
+  @Type(() => StringNullableFilter)
   @IsOptional()
-  @Field(() => StringFilter, {
+  @Field(() => StringNullableFilter, {
     nullable: true,
   })
-  id?: StringFilter;
+  interviewer?: StringNullableFilter;
 
   @ApiProperty({
     required: false,
@@ -75,7 +73,7 @@ class InterviewWhereInput {
   @Field(() => StringNullableFilter, {
     nullable: true,
   })
-  interviewer?: StringNullableFilter;
+  candidate?: StringNullableFilter;
 
   @ApiProperty({
     required: false,

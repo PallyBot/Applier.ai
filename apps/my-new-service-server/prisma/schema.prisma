@@ -1,5 +1,5 @@
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DB_URL")
 }
 
@@ -7,52 +7,188 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Recruiter {
-  createdAt DateTime @default(now())
-  email     String?
-  firstName String?
-  id        String   @id @default(cuid())
-  lastName  String?
-  updatedAt DateTime @updatedAt
-}
-
 model Candidate {
-  createdAt         DateTime    @default(now())
-  domainExpertise   String?
-  email             String?
+  id                String   @id @default(cuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   firstName         String?
-  id                String      @id @default(cuid())
-  interviews        Interview[]
-  lastName          String?
+  email             String?
   resume            Json?
+  lastName          String?
   skills            String?
-  updatedAt         DateTime    @updatedAt
+  domainExpertise   String?
   yearsOfExperience Int?
 }
 
-model JobPosition {
-  createdAt   DateTime               @default(now())
-  description String?
-  id          String                 @id @default(cuid())
-  interviews  Interview[]
-  status      EnumJobPositionStatus?
-  title       String?
-  updatedAt   DateTime               @updatedAt
+model Recruiter {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String?
+  lastName  String?
+  email     String?
 }
 
 model Interview {
-  candidate     Candidate?   @relation(fields: [candidateId], references: [id])
-  candidateId   String?
+  id            String       @id @default(cuid())
   createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
   date          DateTime?
   feedback      String?
-  id            String       @id @default(cuid())
   interviewer   String?
+  candidate     String?
   jobPosition   JobPosition? @relation(fields: [jobPositionId], references: [id])
   jobPositionId String?
+}
+
+model JobPosition {
+  id          String                 @id @default(cuid())
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  title       String?
+  description String?
+  status      EnumJobPositionStatus?
+  interviews  Interview[]
+}
+
+model Message {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+  content       String?
+  senderId      String?
+  interaction   Interaction? @relation(fields: [interactionId], references: [id])
+  interactionId String?
+}
+
+model Interaction {
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  interactionType String?
+  timestamp       DateTime?
+  voiceRecordings VoiceRecording[]
+  messages        Message[]
+}
+
+model VoiceRecording {
+  id            String       @id @default(cuid())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  fileUrl       String?
+  duration      Int?
+  interaction   Interaction? @relation(fields: [interactionId], references: [id])
+  interactionId String?
+}
+
+model JobRequirement {
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  title       String?
+  description String?
+  createdBy   String?
+  attachments Attachment[]
+}
+
+model Attachment {
+  id               String          @id @default(cuid())
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  fileUrl          String?
+  fileType         String?
+  jobRequirement   JobRequirement? @relation(fields: [jobRequirementId], references: [id])
+  jobRequirementId String?
+}
+
+model CandidateScore {
+  id                 String            @id @default(cuid())
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  candidateId        String?
+  score              Float?
+  rankingAlgorithm   RankingAlgorithm? @relation(fields: [rankingAlgorithmId], references: [id])
+  rankingAlgorithmId String?
+}
+
+model RankingAlgorithm {
+  id              String           @id @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String?
+  description     String?
+  candidateScores CandidateScore[]
+}
+
+model CandidateApplication {
+  id          String                          @id @default(cuid())
+  createdAt   DateTime                        @default(now())
+  updatedAt   DateTime                        @updatedAt
+  candidateId String?
+  jobId       String?
+  status      EnumCandidateApplicationStatus?
+}
+
+model Resume {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  fileUrl    String?
+  resumeText String?
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String?
+  description String?
+  price       Float?
+  inventory   Int?
+}
+
+model Order {
+  id          String           @id @default(cuid())
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  totalAmount Float?
+  status      EnumOrderStatus?
+  user        User?            @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  message    String?
+  readStatus Boolean?
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model User {
+  id            String         @id @default(cuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  firstName     String?
+  lastName      String?
+  username      String         @unique
+  email         String?        @unique
+  password      String
+  roles         Json
+  orders        Order[]
+  notifications Notification[]
 }
 
 enum EnumJobPositionStatus {
+  Option1
+}
+
+enum EnumCandidateApplicationStatus {
+  Option1
+}
+
+enum EnumOrderStatus {
   Option1
 }

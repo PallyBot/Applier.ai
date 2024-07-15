@@ -1,13 +1,12 @@
-import { Candidate } from "../candidate/Candidate";
 import { JobPosition } from "../jobPosition/JobPosition";
 
 export type Interview = {
-  candidate?: Candidate | null;
+  id: string;
   createdAt: Date;
+  updatedAt: Date;
   date: Date | null;
   feedback: string | null;
-  id: string;
   interviewer: string | null;
+  candidate: string | null;
   jobPosition?: JobPosition | null;
-  updatedAt: Date;
 };

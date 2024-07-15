@@ -1,10 +1,10 @@
 import { SortOrder } from "../../util/SortOrder";
 
 export type JobPositionOrderByInput = {
-  createdAt?: SortOrder;
-  description?: SortOrder;
   id?: SortOrder;
-  status?: SortOrder;
-  title?: SortOrder;
+  createdAt?: SortOrder;
   updatedAt?: SortOrder;
+  title?: SortOrder;
+  description?: SortOrder;
+  status?: SortOrder;
 };

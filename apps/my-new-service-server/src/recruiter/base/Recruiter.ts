@@ -11,11 +11,19 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsString, IsOptional, MaxLength } from "class-validator";
+import { IsString, IsDate, MaxLength, IsOptional } from "class-validator";
 import { Type } from "class-transformer";
 
 @ObjectType()
 class Recruiter {
+  @ApiProperty({
+    required: true,
+    type: String,
+  })
+  @IsString()
+  @Field(() => String)
+  id!: string;
+
   @ApiProperty({
     required: true,
   })
@@ -25,15 +33,12 @@ class Recruiter {
   createdAt!: Date;
 
   @ApiProperty({
-    required: false,
-    type: String,
+    required: true,
   })
-  @IsString()
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-  })
-  email!: string | null;
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  updatedAt!: Date;
 
   @ApiProperty({
     required: false,
@@ -48,14 +53,6 @@ class Recruiter {
   firstName!: string | null;
 
   @ApiProperty({
-    required: true,
-    type: String,
-  })
-  @IsString()
-  @Field(() => String)
-  id!: string;
-
-  @ApiProperty({
     required: false,
     type: String,
   })
@@ -68,12 +65,15 @@ class Recruiter {
   lastName!: string | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
+    type: String,
   })
-  @IsDate()
-  @Type(() => Date)
-  @Field(() => Date)
-  updatedAt!: Date;
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  email!: string | null;
 }
 
 export { Recruiter as Recruiter };

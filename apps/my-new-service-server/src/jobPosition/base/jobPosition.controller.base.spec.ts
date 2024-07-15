@@ -18,34 +18,34 @@ import { JobPositionService } from "../jobPosition.service";
 const nonExistingId = "nonExistingId";
 const existingId = "existingId";
 const CREATE_INPUT = {
-  createdAt: new Date(),
-  description: "exampleDescription",
   id: "exampleId",
-  title: "exampleTitle",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  title: "exampleTitle",
+  description: "exampleDescription",
 };
 const CREATE_RESULT = {
-  createdAt: new Date(),
-  description: "exampleDescription",
   id: "exampleId",
-  title: "exampleTitle",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  title: "exampleTitle",
+  description: "exampleDescription",
 };
 const FIND_MANY_RESULT = [
   {
-    createdAt: new Date(),
-    description: "exampleDescription",
     id: "exampleId",
-    title: "exampleTitle",
+    createdAt: new Date(),
     updatedAt: new Date(),
+    title: "exampleTitle",
+    description: "exampleDescription",
   },
 ];
 const FIND_ONE_RESULT = {
-  createdAt: new Date(),
-  description: "exampleDescription",
   id: "exampleId",
-  title: "exampleTitle",
+  createdAt: new Date(),
   updatedAt: new Date(),
+  title: "exampleTitle",
+  description: "exampleDescription",
 };
 
 const service = {

@@ -16,80 +16,116 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { CandidateService } from "../candidate.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { CandidateCreateInput } from "./CandidateCreateInput";
 import { Candidate } from "./Candidate";
 import { CandidateFindManyArgs } from "./CandidateFindManyArgs";
 import { CandidateWhereUniqueInput } from "./CandidateWhereUniqueInput";
 import { CandidateUpdateInput } from "./CandidateUpdateInput";
-import { InterviewFindManyArgs } from "../../interview/base/InterviewFindManyArgs";
-import { Interview } from "../../interview/base/Interview";
-import { InterviewWhereUniqueInput } from "../../interview/base/InterviewWhereUniqueInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class CandidateControllerBase {
-  constructor(protected readonly service: CandidateService) {}
+  constructor(
+    protected readonly service: CandidateService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Candidate })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
+  @swagger.ApiBody({
+    type: CandidateCreateInput,
+  })
   async createCandidate(
     @common.Body() data: CandidateCreateInput
   ): Promise<Candidate> {
     return await this.service.createCandidate({
       data: data,
       select: {
-        createdAt: true,
-        domainExpertise: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
-        resume: true,
-        skills: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        email: true,
+        resume: true,
+        lastName: true,
+        skills: true,
+        domainExpertise: true,
         yearsOfExperience: true,
       },
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Candidate] })
   @ApiNestedQuery(CandidateFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidates(@common.Req() request: Request): Promise<Candidate[]> {
     const args = plainToClass(CandidateFindManyArgs, request.query);
     return this.service.candidates({
       ...args,
       select: {
-        createdAt: true,
-        domainExpertise: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
-        resume: true,
-        skills: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        email: true,
+        resume: true,
+        lastName: true,
+        skills: true,
+        domainExpertise: true,
         yearsOfExperience: true,
       },
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Candidate })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidate(
     @common.Param() params: CandidateWhereUniqueInput
   ): Promise<Candidate | null> {
     const result = await this.service.candidate({
       where: params,
       select: {
-        createdAt: true,
-        domainExpertise: true,
-        email: true,
-        firstName: true,
         id: true,
-        lastName: true,
-        resume: true,
-        skills: true,
+        createdAt: true,
         updatedAt: true,
+        firstName: true,
+        email: true,
+        resume: true,
+        lastName: true,
+        skills: true,
+        domainExpertise: true,
         yearsOfExperience: true,
       },
     });
@@ -101,9 +137,21 @@ export class CandidateControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Candidate })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
+  @swagger.ApiBody({
+    type: CandidateUpdateInput,
+  })
   async updateCandidate(
     @common.Param() params: CandidateWhereUniqueInput,
     @common.Body() data: CandidateUpdateInput
@@ -113,15 +161,15 @@ export class CandidateControllerBase {
         where: params,
         data: data,
         select: {
-          createdAt: true,
-          domainExpertise: true,
-          email: true,
-          firstName: true,
           id: true,
-          lastName: true,
-          resume: true,
-          skills: true,
+          createdAt: true,
           updatedAt: true,
+          firstName: true,
+          email: true,
+          resume: true,
+          lastName: true,
+          skills: true,
+          domainExpertise: true,
           yearsOfExperience: true,
         },
       });
@@ -138,6 +186,14 @@ export class CandidateControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Candidate })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteCandidate(
     @common.Param() params: CandidateWhereUniqueInput
   ): Promise<Candidate | null> {
@@ -145,15 +201,15 @@ export class CandidateControllerBase {
       return await this.service.deleteCandidate({
         where: params,
         select: {
-          createdAt: true,
-          domainExpertise: true,
-          email: true,
-          firstName: true,
           id: true,
-          lastName: true,
-          resume: true,
-          skills: true,
+          createdAt: true,
           updatedAt: true,
+          firstName: true,
+          email: true,
+          resume: true,
+          lastName: true,
+          skills: true,
+          domainExpertise: true,
           yearsOfExperience: true,
         },
       });
@@ -165,95 +221,5 @@ export class CandidateControllerBase {
       }
       throw error;
     }
-  }
-
-  @common.Get("/:id/interviews")
-  @ApiNestedQuery(InterviewFindManyArgs)
-  async findInterviews(
-    @common.Req() request: Request,
-    @common.Param() params: CandidateWhereUniqueInput
-  ): Promise<Interview[]> {
-    const query = plainToClass(InterviewFindManyArgs, request.query);
-    const results = await this.service.findInterviews(params.id, {
-      ...query,
-      select: {
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
-
-        createdAt: true,
-        date: true,
-        feedback: true,
-        id: true,
-        interviewer: true,
-
-        jobPosition: {
-          select: {
-            id: true,
-          },
-        },
-
-        updatedAt: true,
-      },
-    });
-    if (results === null) {
-      throw new errors.NotFoundException(
-        `No resource was found for ${JSON.stringify(params)}`
-      );
-    }
-    return results;
-  }
-
-  @common.Post("/:id/interviews")
-  async connectInterviews(
-    @common.Param() params: CandidateWhereUniqueInput,
-    @common.Body() body: InterviewWhereUniqueInput[]
-  ): Promise<void> {
-    const data = {
-      interviews: {
-        connect: body,
-      },
-    };
-    await this.service.updateCandidate({
-      where: params,
-      data,
-      select: { id: true },
-    });
-  }
-
-  @common.Patch("/:id/interviews")
-  async updateInterviews(
-    @common.Param() params: CandidateWhereUniqueInput,
-    @common.Body() body: InterviewWhereUniqueInput[]
-  ): Promise<void> {
-    const data = {
-      interviews: {
-        set: body,
-      },
-    };
-    await this.service.updateCandidate({
-      where: params,
-      data,
-      select: { id: true },
-    });
-  }
-
-  @common.Delete("/:id/interviews")
-  async disconnectInterviews(
-    @common.Param() params: CandidateWhereUniqueInput,
-    @common.Body() body: InterviewWhereUniqueInput[]
-  ): Promise<void> {
-    const data = {
-      interviews: {
-        disconnect: body,
-      },
-    };
-    await this.service.updateCandidate({
-      where: params,
-      data,
-      select: { id: true },
-    });
   }
 }

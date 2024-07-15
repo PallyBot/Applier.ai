@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { JobPosition } from "./JobPosition";
 import { JobPositionCountArgs } from "./JobPositionCountArgs";
 import { JobPositionFindManyArgs } from "./JobPositionFindManyArgs";
@@ -23,10 +29,20 @@ import { DeleteJobPositionArgs } from "./DeleteJobPositionArgs";
 import { InterviewFindManyArgs } from "../../interview/base/InterviewFindManyArgs";
 import { Interview } from "../../interview/base/Interview";
 import { JobPositionService } from "../jobPosition.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => JobPosition)
 export class JobPositionResolverBase {
-  constructor(protected readonly service: JobPositionService) {}
+  constructor(
+    protected readonly service: JobPositionService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "read",
+    possession: "any",
+  })
   async _jobPositionsMeta(
     @graphql.Args() args: JobPositionCountArgs
   ): Promise<MetaQueryPayload> {
@@ -36,14 +52,26 @@ export class JobPositionResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [JobPosition])
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "read",
+    possession: "any",
+  })
   async jobPositions(
     @graphql.Args() args: JobPositionFindManyArgs
   ): Promise<JobPosition[]> {
     return this.service.jobPositions(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => JobPosition, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "read",
+    possession: "own",
+  })
   async jobPosition(
     @graphql.Args() args: JobPositionFindUniqueArgs
   ): Promise<JobPosition | null> {
@@ -54,7 +82,13 @@ export class JobPositionResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => JobPosition)
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "create",
+    possession: "any",
+  })
   async createJobPosition(
     @graphql.Args() args: CreateJobPositionArgs
   ): Promise<JobPosition> {
@@ -64,7 +98,13 @@ export class JobPositionResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => JobPosition)
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "update",
+    possession: "any",
+  })
   async updateJobPosition(
     @graphql.Args() args: UpdateJobPositionArgs
   ): Promise<JobPosition | null> {
@@ -84,6 +124,11 @@ export class JobPositionResolverBase {
   }
 
   @graphql.Mutation(() => JobPosition)
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "delete",
+    possession: "any",
+  })
   async deleteJobPosition(
     @graphql.Args() args: DeleteJobPositionArgs
   ): Promise<JobPosition | null> {
@@ -99,7 +144,13 @@ export class JobPositionResolverBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.ResolveField(() => [Interview], { name: "interviews" })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "any",
+  })
   async findInterviews(
     @graphql.Parent() parent: JobPosition,
     @graphql.Args() args: InterviewFindManyArgs

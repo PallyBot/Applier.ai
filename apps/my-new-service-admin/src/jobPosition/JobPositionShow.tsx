@@ -4,44 +4,38 @@ import {
   Show,
   SimpleShowLayout,
   ShowProps,
-  DateField,
   TextField,
+  DateField,
   ReferenceManyField,
   Datagrid,
   ReferenceField,
 } from "react-admin";
 
-import { CANDIDATE_TITLE_FIELD } from "../candidate/CandidateTitle";
 import { JOBPOSITION_TITLE_FIELD } from "./JobPositionTitle";
 
 export const JobPositionShow = (props: ShowProps): React.ReactElement => {
   return (
     <Show {...props}>
       <SimpleShowLayout>
-        <DateField source="createdAt" label="Created At" />
-        <TextField label="description" source="description" />
         <TextField label="ID" source="id" />
-        <TextField label="status" source="status" />
-        <TextField label="title" source="title" />
+        <DateField source="createdAt" label="Created At" />
         <DateField source="updatedAt" label="Updated At" />
+        <TextField label="title" source="title" />
+        <TextField label="description" source="description" />
+        <TextField label="status" source="status" />
         <ReferenceManyField
           reference="Interview"
           target="jobPositionId"
           label="Interviews"
         >
           <Datagrid rowClick="show">
-            <ReferenceField
-              label="candidate"
-              source="candidate.id"
-              reference="Candidate"
-            >
-              <TextField source={CANDIDATE_TITLE_FIELD} />
-            </ReferenceField>
+            <TextField label="ID" source="id" />
             <DateField source="createdAt" label="Created At" />
+            <DateField source="updatedAt" label="Updated At" />
             <TextField label="date" source="date" />
             <TextField label="feedback" source="feedback" />
-            <TextField label="ID" source="id" />
             <TextField label="interviewer" source="interviewer" />
+            <TextField label="candidate" source="candidate" />
             <ReferenceField
               label="jobPosition"
               source="jobposition.id"
@@ -49,7 +43,6 @@ export const JobPositionShow = (props: ShowProps): React.ReactElement => {
             >
               <TextField source={JOBPOSITION_TITLE_FIELD} />
             </ReferenceField>
-            <DateField source="updatedAt" label="Updated At" />
           </Datagrid>
         </ReferenceManyField>
       </SimpleShowLayout>

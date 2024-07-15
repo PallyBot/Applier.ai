@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { Candidate } from "./Candidate";
 import { CandidateCountArgs } from "./CandidateCountArgs";
 import { CandidateFindManyArgs } from "./CandidateFindManyArgs";
@@ -20,13 +26,21 @@ import { CandidateFindUniqueArgs } from "./CandidateFindUniqueArgs";
 import { CreateCandidateArgs } from "./CreateCandidateArgs";
 import { UpdateCandidateArgs } from "./UpdateCandidateArgs";
 import { DeleteCandidateArgs } from "./DeleteCandidateArgs";
-import { InterviewFindManyArgs } from "../../interview/base/InterviewFindManyArgs";
-import { Interview } from "../../interview/base/Interview";
 import { CandidateService } from "../candidate.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Candidate)
 export class CandidateResolverBase {
-  constructor(protected readonly service: CandidateService) {}
+  constructor(
+    protected readonly service: CandidateService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "read",
+    possession: "any",
+  })
   async _candidatesMeta(
     @graphql.Args() args: CandidateCountArgs
   ): Promise<MetaQueryPayload> {
@@ -36,14 +50,26 @@ export class CandidateResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [Candidate])
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "read",
+    possession: "any",
+  })
   async candidates(
     @graphql.Args() args: CandidateFindManyArgs
   ): Promise<Candidate[]> {
     return this.service.candidates(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => Candidate, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "read",
+    possession: "own",
+  })
   async candidate(
     @graphql.Args() args: CandidateFindUniqueArgs
   ): Promise<Candidate | null> {
@@ -54,7 +80,13 @@ export class CandidateResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Candidate)
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "create",
+    possession: "any",
+  })
   async createCandidate(
     @graphql.Args() args: CreateCandidateArgs
   ): Promise<Candidate> {
@@ -64,7 +96,13 @@ export class CandidateResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Candidate)
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "update",
+    possession: "any",
+  })
   async updateCandidate(
     @graphql.Args() args: UpdateCandidateArgs
   ): Promise<Candidate | null> {
@@ -84,6 +122,11 @@ export class CandidateResolverBase {
   }
 
   @graphql.Mutation(() => Candidate)
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "delete",
+    possession: "any",
+  })
   async deleteCandidate(
     @graphql.Args() args: DeleteCandidateArgs
   ): Promise<Candidate | null> {
@@ -97,19 +140,5 @@ export class CandidateResolverBase {
       }
       throw error;
     }
-  }
-
-  @graphql.ResolveField(() => [Interview], { name: "interviews" })
-  async findInterviews(
-    @graphql.Parent() parent: Candidate,
-    @graphql.Args() args: InterviewFindManyArgs
-  ): Promise<Interview[]> {
-    const results = await this.service.findInterviews(parent.id, args);
-
-    if (!results) {
-      return [];
-    }
-
-    return results;
   }
 }

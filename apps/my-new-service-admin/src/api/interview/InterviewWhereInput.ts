@@ -1,14 +1,13 @@
-import { CandidateWhereUniqueInput } from "../candidate/CandidateWhereUniqueInput";
+import { StringFilter } from "../../util/StringFilter";
 import { DateTimeNullableFilter } from "../../util/DateTimeNullableFilter";
 import { StringNullableFilter } from "../../util/StringNullableFilter";
-import { StringFilter } from "../../util/StringFilter";
 import { JobPositionWhereUniqueInput } from "../jobPosition/JobPositionWhereUniqueInput";
 
 export type InterviewWhereInput = {
-  candidate?: CandidateWhereUniqueInput;
+  id?: StringFilter;
   date?: DateTimeNullableFilter;
   feedback?: StringNullableFilter;
-  id?: StringFilter;
   interviewer?: StringNullableFilter;
+  candidate?: StringNullableFilter;
   jobPosition?: JobPositionWhereUniqueInput;
 };

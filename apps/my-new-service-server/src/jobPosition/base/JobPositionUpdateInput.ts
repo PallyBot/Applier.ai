@@ -15,15 +15,27 @@ import {
   IsString,
   MaxLength,
   IsOptional,
-  ValidateNested,
   IsEnum,
+  ValidateNested,
 } from "class-validator";
+import { EnumJobPositionStatus } from "./EnumJobPositionStatus";
 import { InterviewUpdateManyWithoutJobPositionsInput } from "./InterviewUpdateManyWithoutJobPositionsInput";
 import { Type } from "class-transformer";
-import { EnumJobPositionStatus } from "./EnumJobPositionStatus";
 
 @InputType()
 class JobPositionUpdateInput {
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  title?: string | null;
+
   @ApiProperty({
     required: false,
     type: String,
@@ -38,18 +50,6 @@ class JobPositionUpdateInput {
 
   @ApiProperty({
     required: false,
-    type: () => InterviewUpdateManyWithoutJobPositionsInput,
-  })
-  @ValidateNested()
-  @Type(() => InterviewUpdateManyWithoutJobPositionsInput)
-  @IsOptional()
-  @Field(() => InterviewUpdateManyWithoutJobPositionsInput, {
-    nullable: true,
-  })
-  interviews?: InterviewUpdateManyWithoutJobPositionsInput;
-
-  @ApiProperty({
-    required: false,
     enum: EnumJobPositionStatus,
   })
   @IsEnum(EnumJobPositionStatus)
@@ -61,15 +61,15 @@ class JobPositionUpdateInput {
 
   @ApiProperty({
     required: false,
-    type: String,
+    type: () => InterviewUpdateManyWithoutJobPositionsInput,
   })
-  @IsString()
-  @MaxLength(1000)
+  @ValidateNested()
+  @Type(() => InterviewUpdateManyWithoutJobPositionsInput)
   @IsOptional()
-  @Field(() => String, {
+  @Field(() => InterviewUpdateManyWithoutJobPositionsInput, {
     nullable: true,
   })
-  title?: string | null;
+  interviews?: InterviewUpdateManyWithoutJobPositionsInput;
 }
 
 export { JobPositionUpdateInput as JobPositionUpdateInput };

@@ -16,29 +16,44 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { InterviewService } from "../interview.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { InterviewCreateInput } from "./InterviewCreateInput";
 import { Interview } from "./Interview";
 import { InterviewFindManyArgs } from "./InterviewFindManyArgs";
 import { InterviewWhereUniqueInput } from "./InterviewWhereUniqueInput";
 import { InterviewUpdateInput } from "./InterviewUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class InterviewControllerBase {
-  constructor(protected readonly service: InterviewService) {}
+  constructor(
+    protected readonly service: InterviewService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Interview })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
+  @swagger.ApiBody({
+    type: InterviewCreateInput,
+  })
   async createInterview(
     @common.Body() data: InterviewCreateInput
   ): Promise<Interview> {
     return await this.service.createInterview({
       data: {
         ...data,
-
-        candidate: data.candidate
-          ? {
-              connect: data.candidate,
-            }
-          : undefined,
 
         jobPosition: data.jobPosition
           ? {
@@ -47,88 +62,88 @@ export class InterviewControllerBase {
           : undefined,
       },
       select: {
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
-
+        id: true,
         createdAt: true,
+        updatedAt: true,
         date: true,
         feedback: true,
-        id: true,
         interviewer: true,
+        candidate: true,
 
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Interview] })
   @ApiNestedQuery(InterviewFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async interviews(@common.Req() request: Request): Promise<Interview[]> {
     const args = plainToClass(InterviewFindManyArgs, request.query);
     return this.service.interviews({
       ...args,
       select: {
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
-
+        id: true,
         createdAt: true,
+        updatedAt: true,
         date: true,
         feedback: true,
-        id: true,
         interviewer: true,
+        candidate: true,
 
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Interview })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async interview(
     @common.Param() params: InterviewWhereUniqueInput
   ): Promise<Interview | null> {
     const result = await this.service.interview({
       where: params,
       select: {
-        candidate: {
-          select: {
-            id: true,
-          },
-        },
-
+        id: true,
         createdAt: true,
+        updatedAt: true,
         date: true,
         feedback: true,
-        id: true,
         interviewer: true,
+        candidate: true,
 
         jobPosition: {
           select: {
             id: true,
           },
         },
-
-        updatedAt: true,
       },
     });
     if (result === null) {
@@ -139,9 +154,21 @@ export class InterviewControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Interview })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
+  @swagger.ApiBody({
+    type: InterviewUpdateInput,
+  })
   async updateInterview(
     @common.Param() params: InterviewWhereUniqueInput,
     @common.Body() data: InterviewUpdateInput
@@ -152,12 +179,6 @@ export class InterviewControllerBase {
         data: {
           ...data,
 
-          candidate: data.candidate
-            ? {
-                connect: data.candidate,
-              }
-            : undefined,
-
           jobPosition: data.jobPosition
             ? {
                 connect: data.jobPosition,
@@ -165,25 +186,19 @@ export class InterviewControllerBase {
             : undefined,
         },
         select: {
-          candidate: {
-            select: {
-              id: true,
-            },
-          },
-
+          id: true,
           createdAt: true,
+          updatedAt: true,
           date: true,
           feedback: true,
-          id: true,
           interviewer: true,
+          candidate: true,
 
           jobPosition: {
             select: {
               id: true,
             },
           },
-
-          updatedAt: true,
         },
       });
     } catch (error) {
@@ -199,6 +214,14 @@ export class InterviewControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Interview })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteInterview(
     @common.Param() params: InterviewWhereUniqueInput
   ): Promise<Interview | null> {
@@ -206,25 +229,19 @@ export class InterviewControllerBase {
       return await this.service.deleteInterview({
         where: params,
         select: {
-          candidate: {
-            select: {
-              id: true,
-            },
-          },
-
+          id: true,
           createdAt: true,
+          updatedAt: true,
           date: true,
           feedback: true,
-          id: true,
           interviewer: true,
+          candidate: true,
 
           jobPosition: {
             select: {
               id: true,
             },
           },
-
-          updatedAt: true,
         },
       });
     } catch (error) {

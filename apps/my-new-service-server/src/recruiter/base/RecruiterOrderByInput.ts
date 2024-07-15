@@ -28,6 +28,17 @@ class RecruiterOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
+  id?: SortOrder;
+
+  @ApiProperty({
+    required: false,
+    enum: ["asc", "desc"],
+  })
+  @IsOptional()
+  @IsEnum(SortOrder)
+  @Field(() => SortOrder, {
+    nullable: true,
+  })
   createdAt?: SortOrder;
 
   @ApiProperty({
@@ -39,7 +50,7 @@ class RecruiterOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  email?: SortOrder;
+  updatedAt?: SortOrder;
 
   @ApiProperty({
     required: false,
@@ -61,17 +72,6 @@ class RecruiterOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  id?: SortOrder;
-
-  @ApiProperty({
-    required: false,
-    enum: ["asc", "desc"],
-  })
-  @IsOptional()
-  @IsEnum(SortOrder)
-  @Field(() => SortOrder, {
-    nullable: true,
-  })
   lastName?: SortOrder;
 
   @ApiProperty({
@@ -83,7 +83,7 @@ class RecruiterOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  updatedAt?: SortOrder;
+  email?: SortOrder;
 }
 
 export { RecruiterOrderByInput as RecruiterOrderByInput };

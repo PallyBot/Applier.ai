@@ -12,23 +12,29 @@ https://docs.amplication.com/how-to/custom-code
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
 import {
-  IsDate,
   IsString,
+  IsDate,
   MaxLength,
   IsOptional,
-  ValidateNested,
   IsInt,
   Min,
   Max,
 } from "class-validator";
 import { Type } from "class-transformer";
-import { Interview } from "../../interview/base/Interview";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { JsonValue } from "type-fest";
 
 @ObjectType()
 class Candidate {
+  @ApiProperty({
+    required: true,
+    type: String,
+  })
+  @IsString()
+  @Field(() => String)
+  id!: string;
+
   @ApiProperty({
     required: true,
   })
@@ -38,27 +44,12 @@ class Candidate {
   createdAt!: Date;
 
   @ApiProperty({
-    required: false,
-    type: String,
+    required: true,
   })
-  @IsString()
-  @MaxLength(1000)
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-  })
-  domainExpertise!: string | null;
-
-  @ApiProperty({
-    required: false,
-    type: String,
-  })
-  @IsString()
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-  })
-  email!: string | null;
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  updatedAt!: Date;
 
   @ApiProperty({
     required: false,
@@ -73,33 +64,15 @@ class Candidate {
   firstName!: string | null;
 
   @ApiProperty({
-    required: true,
-    type: String,
-  })
-  @IsString()
-  @Field(() => String)
-  id!: string;
-
-  @ApiProperty({
-    required: false,
-    type: () => [Interview],
-  })
-  @ValidateNested()
-  @Type(() => Interview)
-  @IsOptional()
-  interviews?: Array<Interview>;
-
-  @ApiProperty({
     required: false,
     type: String,
   })
   @IsString()
-  @MaxLength(1000)
   @IsOptional()
   @Field(() => String, {
     nullable: true,
   })
-  lastName!: string | null;
+  email!: string | null;
 
   @ApiProperty({
     required: false,
@@ -121,15 +94,31 @@ class Candidate {
   @Field(() => String, {
     nullable: true,
   })
+  lastName!: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
   skills!: string | null;
 
   @ApiProperty({
-    required: true,
+    required: false,
+    type: String,
   })
-  @IsDate()
-  @Type(() => Date)
-  @Field(() => Date)
-  updatedAt!: Date;
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  domainExpertise!: string | null;
 
   @ApiProperty({
     required: false,

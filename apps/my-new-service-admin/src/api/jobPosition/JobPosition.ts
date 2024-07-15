@@ -1,11 +1,11 @@
 import { Interview } from "../interview/Interview";
 
 export type JobPosition = {
-  createdAt: Date;
-  description: string | null;
   id: string;
-  interviews?: Array<Interview>;
-  status?: "Option1" | null;
-  title: string | null;
+  createdAt: Date;
   updatedAt: Date;
+  title: string | null;
+  description: string | null;
+  status?: "Option1" | null;
+  interviews?: Array<Interview>;
 };

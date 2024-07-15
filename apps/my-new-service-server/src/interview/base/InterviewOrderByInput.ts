@@ -28,7 +28,7 @@ class InterviewOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  candidateId?: SortOrder;
+  id?: SortOrder;
 
   @ApiProperty({
     required: false,
@@ -40,6 +40,17 @@ class InterviewOrderByInput {
     nullable: true,
   })
   createdAt?: SortOrder;
+
+  @ApiProperty({
+    required: false,
+    enum: ["asc", "desc"],
+  })
+  @IsOptional()
+  @IsEnum(SortOrder)
+  @Field(() => SortOrder, {
+    nullable: true,
+  })
+  updatedAt?: SortOrder;
 
   @ApiProperty({
     required: false,
@@ -72,17 +83,6 @@ class InterviewOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  id?: SortOrder;
-
-  @ApiProperty({
-    required: false,
-    enum: ["asc", "desc"],
-  })
-  @IsOptional()
-  @IsEnum(SortOrder)
-  @Field(() => SortOrder, {
-    nullable: true,
-  })
   interviewer?: SortOrder;
 
   @ApiProperty({
@@ -94,7 +94,7 @@ class InterviewOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  jobPositionId?: SortOrder;
+  candidate?: SortOrder;
 
   @ApiProperty({
     required: false,
@@ -105,7 +105,7 @@ class InterviewOrderByInput {
   @Field(() => SortOrder, {
     nullable: true,
   })
-  updatedAt?: SortOrder;
+  jobPositionId?: SortOrder;
 }
 
 export { InterviewOrderByInput as InterviewOrderByInput };

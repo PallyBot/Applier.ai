@@ -1,14 +1,14 @@
 import { SortOrder } from "../../util/SortOrder";
 
 export type CandidateOrderByInput = {
-  createdAt?: SortOrder;
-  domainExpertise?: SortOrder;
-  email?: SortOrder;
-  firstName?: SortOrder;
   id?: SortOrder;
-  lastName?: SortOrder;
-  resume?: SortOrder;
-  skills?: SortOrder;
+  createdAt?: SortOrder;
   updatedAt?: SortOrder;
+  firstName?: SortOrder;
+  email?: SortOrder;
+  resume?: SortOrder;
+  lastName?: SortOrder;
+  skills?: SortOrder;
+  domainExpertise?: SortOrder;
   yearsOfExperience?: SortOrder;
 };

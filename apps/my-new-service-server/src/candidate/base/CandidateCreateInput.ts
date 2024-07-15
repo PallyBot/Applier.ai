@@ -15,13 +15,10 @@ import {
   IsString,
   MaxLength,
   IsOptional,
-  ValidateNested,
   IsInt,
   Min,
   Max,
 } from "class-validator";
-import { InterviewCreateNestedManyWithoutCandidatesInput } from "./InterviewCreateNestedManyWithoutCandidatesInput";
-import { Type } from "class-transformer";
 import { IsJSONValue } from "../../validators";
 import { GraphQLJSON } from "graphql-type-json";
 import { InputJsonValue } from "../../types";
@@ -38,7 +35,7 @@ class CandidateCreateInput {
   @Field(() => String, {
     nullable: true,
   })
-  domainExpertise?: string | null;
+  firstName?: string | null;
 
   @ApiProperty({
     required: false,
@@ -50,42 +47,6 @@ class CandidateCreateInput {
     nullable: true,
   })
   email?: string | null;
-
-  @ApiProperty({
-    required: false,
-    type: String,
-  })
-  @IsString()
-  @MaxLength(1000)
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-  })
-  firstName?: string | null;
-
-  @ApiProperty({
-    required: false,
-    type: () => InterviewCreateNestedManyWithoutCandidatesInput,
-  })
-  @ValidateNested()
-  @Type(() => InterviewCreateNestedManyWithoutCandidatesInput)
-  @IsOptional()
-  @Field(() => InterviewCreateNestedManyWithoutCandidatesInput, {
-    nullable: true,
-  })
-  interviews?: InterviewCreateNestedManyWithoutCandidatesInput;
-
-  @ApiProperty({
-    required: false,
-    type: String,
-  })
-  @IsString()
-  @MaxLength(1000)
-  @IsOptional()
-  @Field(() => String, {
-    nullable: true,
-  })
-  lastName?: string | null;
 
   @ApiProperty({
     required: false,
@@ -107,7 +68,31 @@ class CandidateCreateInput {
   @Field(() => String, {
     nullable: true,
   })
+  lastName?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
   skills?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @MaxLength(1000)
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  domainExpertise?: string | null;
 
   @ApiProperty({
     required: false,

@@ -11,11 +11,10 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { StringNullableFilter } from "../../util/StringNullableFilter";
-import { Type } from "class-transformer";
-import { IsOptional, ValidateNested } from "class-validator";
 import { StringFilter } from "../../util/StringFilter";
-import { InterviewListRelationFilter } from "../../interview/base/InterviewListRelationFilter";
+import { Type } from "class-transformer";
+import { IsOptional } from "class-validator";
+import { StringNullableFilter } from "../../util/StringNullableFilter";
 import { JsonFilter } from "../../util/JsonFilter";
 import { IntNullableFilter } from "../../util/IntNullableFilter";
 
@@ -23,25 +22,14 @@ import { IntNullableFilter } from "../../util/IntNullableFilter";
 class CandidateWhereInput {
   @ApiProperty({
     required: false,
-    type: StringNullableFilter,
+    type: StringFilter,
   })
-  @Type(() => StringNullableFilter)
+  @Type(() => StringFilter)
   @IsOptional()
-  @Field(() => StringNullableFilter, {
+  @Field(() => StringFilter, {
     nullable: true,
   })
-  domainExpertise?: StringNullableFilter;
-
-  @ApiProperty({
-    required: false,
-    type: StringNullableFilter,
-  })
-  @Type(() => StringNullableFilter)
-  @IsOptional()
-  @Field(() => StringNullableFilter, {
-    nullable: true,
-  })
-  email?: StringNullableFilter;
+  id?: StringFilter;
 
   @ApiProperty({
     required: false,
@@ -56,29 +44,6 @@ class CandidateWhereInput {
 
   @ApiProperty({
     required: false,
-    type: StringFilter,
-  })
-  @Type(() => StringFilter)
-  @IsOptional()
-  @Field(() => StringFilter, {
-    nullable: true,
-  })
-  id?: StringFilter;
-
-  @ApiProperty({
-    required: false,
-    type: () => InterviewListRelationFilter,
-  })
-  @ValidateNested()
-  @Type(() => InterviewListRelationFilter)
-  @IsOptional()
-  @Field(() => InterviewListRelationFilter, {
-    nullable: true,
-  })
-  interviews?: InterviewListRelationFilter;
-
-  @ApiProperty({
-    required: false,
     type: StringNullableFilter,
   })
   @Type(() => StringNullableFilter)
@@ -86,7 +51,7 @@ class CandidateWhereInput {
   @Field(() => StringNullableFilter, {
     nullable: true,
   })
-  lastName?: StringNullableFilter;
+  email?: StringNullableFilter;
 
   @ApiProperty({
     required: false,
@@ -108,7 +73,29 @@ class CandidateWhereInput {
   @Field(() => StringNullableFilter, {
     nullable: true,
   })
+  lastName?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: StringNullableFilter,
+  })
+  @Type(() => StringNullableFilter)
+  @IsOptional()
+  @Field(() => StringNullableFilter, {
+    nullable: true,
+  })
   skills?: StringNullableFilter;
+
+  @ApiProperty({
+    required: false,
+    type: StringNullableFilter,
+  })
+  @Type(() => StringNullableFilter)
+  @IsOptional()
+  @Field(() => StringNullableFilter, {
+    nullable: true,
+  })
+  domainExpertise?: StringNullableFilter;
 
   @ApiProperty({
     required: false,

@@ -11,13 +11,12 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { ObjectType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { Candidate } from "../../candidate/base/Candidate";
 import {
-  ValidateNested,
-  IsOptional,
-  IsDate,
   IsString,
+  IsDate,
+  IsOptional,
   MaxLength,
+  ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { JobPosition } from "../../jobPosition/base/JobPosition";
@@ -25,13 +24,12 @@ import { JobPosition } from "../../jobPosition/base/JobPosition";
 @ObjectType()
 class Interview {
   @ApiProperty({
-    required: false,
-    type: () => Candidate,
+    required: true,
+    type: String,
   })
-  @ValidateNested()
-  @Type(() => Candidate)
-  @IsOptional()
-  candidate?: Candidate | null;
+  @IsString()
+  @Field(() => String)
+  id!: string;
 
   @ApiProperty({
     required: true,
@@ -40,6 +38,14 @@ class Interview {
   @Type(() => Date)
   @Field(() => Date)
   createdAt!: Date;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsDate()
+  @Type(() => Date)
+  @Field(() => Date)
+  updatedAt!: Date;
 
   @ApiProperty({
     required: false,
@@ -65,14 +71,6 @@ class Interview {
   feedback!: string | null;
 
   @ApiProperty({
-    required: true,
-    type: String,
-  })
-  @IsString()
-  @Field(() => String)
-  id!: string;
-
-  @ApiProperty({
     required: false,
     type: String,
   })
@@ -86,20 +84,23 @@ class Interview {
 
   @ApiProperty({
     required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  candidate!: string | null;
+
+  @ApiProperty({
+    required: false,
     type: () => JobPosition,
   })
   @ValidateNested()
   @Type(() => JobPosition)
   @IsOptional()
   jobPosition?: JobPosition | null;
-
-  @ApiProperty({
-    required: true,
-  })
-  @IsDate()
-  @Type(() => Date)
-  @Field(() => Date)
-  updatedAt!: Date;
 }
 
 export { Interview as Interview };

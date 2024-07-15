@@ -5,9 +5,9 @@ export const RecruiterCreate = (props: CreateProps): React.ReactElement => {
   return (
     <Create {...props}>
       <SimpleForm>
-        <TextInput label="email" source="email" type="email" />
         <TextInput label="firstName" source="firstName" />
         <TextInput label="lastName" source="lastName" />
+        <TextInput label="email" source="email" type="email" />
       </SimpleForm>
     </Create>
   );

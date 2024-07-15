@@ -12,12 +12,30 @@ import {
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-grpc";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace-node";
-import { RecruiterModule } from "./recruiter/recruiter.module";
 import { CandidateModule } from "./candidate/candidate.module";
-import { JobPositionModule } from "./jobPosition/jobPosition.module";
+import { RecruiterModule } from "./recruiter/recruiter.module";
 import { InterviewModule } from "./interview/interview.module";
+import { JobPositionModule } from "./jobPosition/jobPosition.module";
+import { MessageModule } from "./message/message.module";
+import { InteractionModule } from "./interaction/interaction.module";
+import { VoiceRecordingModule } from "./voiceRecording/voiceRecording.module";
+import { JobRequirementModule } from "./jobRequirement/jobRequirement.module";
+import { AttachmentModule } from "./attachment/attachment.module";
+import { CandidateScoreModule } from "./candidateScore/candidateScore.module";
+import { RankingAlgorithmModule } from "./rankingAlgorithm/rankingAlgorithm.module";
+import { CandidateApplicationModule } from "./candidateApplication/candidateApplication.module";
+import { ResumeModule } from "./resume/resume.module";
+import { ProductModule } from "./product/product.module";
+import { OrderModule } from "./order/order.module";
+import { NotificationModule } from "./notification/notification.module";
+import { UserModule } from "./user/user.module";
 import { ApplicationModule } from "./Application/application.module";
+import { AtsModule } from "./Ats/ats.module";
+import { CandidateRankingModule } from "./CandidateRanking/candidateranking.module";
+import { JobUploadModule } from "./JobUpload/jobupload.module";
 import { TaskSchedulerModule } from "./TaskScheduler/taskscheduler.module";
+import { UserInteractionModule } from "./UserInteraction/userinteraction.module";
+import { UserManagementModule } from "./UserManagement/usermanagement.module";
 import { HealthModule } from "./health/health.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { SecretsManagerModule } from "./providers/secrets/secretsManager.module";
@@ -30,17 +48,40 @@ import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 
 import { LoggerModule } from "./logger/logger.module";
 
+import { ACLModule } from "./auth/acl.module";
+import { AuthModule } from "./auth/auth.module";
+
 @Module({
   controllers: [],
   imports: [
+    ACLModule,
+    AuthModule,
     KafkaModule,
     LoggerModule,
-    RecruiterModule,
     CandidateModule,
-    JobPositionModule,
+    RecruiterModule,
     InterviewModule,
+    JobPositionModule,
+    MessageModule,
+    InteractionModule,
+    VoiceRecordingModule,
+    JobRequirementModule,
+    AttachmentModule,
+    CandidateScoreModule,
+    RankingAlgorithmModule,
+    CandidateApplicationModule,
+    ResumeModule,
+    ProductModule,
+    OrderModule,
+    NotificationModule,
+    UserModule,
     ApplicationModule,
+    AtsModule,
+    CandidateRankingModule,
+    JobUploadModule,
     TaskSchedulerModule,
+    UserInteractionModule,
+    UserManagementModule,
     HealthModule,
     PrismaModule,
     SecretsManagerModule,

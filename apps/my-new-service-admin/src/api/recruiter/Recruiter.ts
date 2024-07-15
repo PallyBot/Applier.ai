@@ -1,8 +1,8 @@
 export type Recruiter = {
-  createdAt: Date;
-  email: string | null;
-  firstName: string | null;
   id: string;
-  lastName: string | null;
+  createdAt: Date;
   updatedAt: Date;
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
 };

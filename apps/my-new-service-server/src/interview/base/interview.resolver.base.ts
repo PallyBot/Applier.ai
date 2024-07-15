@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { Interview } from "./Interview";
 import { InterviewCountArgs } from "./InterviewCountArgs";
 import { InterviewFindManyArgs } from "./InterviewFindManyArgs";
@@ -20,13 +26,22 @@ import { InterviewFindUniqueArgs } from "./InterviewFindUniqueArgs";
 import { CreateInterviewArgs } from "./CreateInterviewArgs";
 import { UpdateInterviewArgs } from "./UpdateInterviewArgs";
 import { DeleteInterviewArgs } from "./DeleteInterviewArgs";
-import { Candidate } from "../../candidate/base/Candidate";
 import { JobPosition } from "../../jobPosition/base/JobPosition";
 import { InterviewService } from "../interview.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Interview)
 export class InterviewResolverBase {
-  constructor(protected readonly service: InterviewService) {}
+  constructor(
+    protected readonly service: InterviewService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "any",
+  })
   async _interviewsMeta(
     @graphql.Args() args: InterviewCountArgs
   ): Promise<MetaQueryPayload> {
@@ -36,14 +51,26 @@ export class InterviewResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [Interview])
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "any",
+  })
   async interviews(
     @graphql.Args() args: InterviewFindManyArgs
   ): Promise<Interview[]> {
     return this.service.interviews(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => Interview, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "own",
+  })
   async interview(
     @graphql.Args() args: InterviewFindUniqueArgs
   ): Promise<Interview | null> {
@@ -54,7 +81,13 @@ export class InterviewResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Interview)
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "create",
+    possession: "any",
+  })
   async createInterview(
     @graphql.Args() args: CreateInterviewArgs
   ): Promise<Interview> {
@@ -62,12 +95,6 @@ export class InterviewResolverBase {
       ...args,
       data: {
         ...args.data,
-
-        candidate: args.data.candidate
-          ? {
-              connect: args.data.candidate,
-            }
-          : undefined,
 
         jobPosition: args.data.jobPosition
           ? {
@@ -78,7 +105,13 @@ export class InterviewResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Interview)
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "update",
+    possession: "any",
+  })
   async updateInterview(
     @graphql.Args() args: UpdateInterviewArgs
   ): Promise<Interview | null> {
@@ -87,12 +120,6 @@ export class InterviewResolverBase {
         ...args,
         data: {
           ...args.data,
-
-          candidate: args.data.candidate
-            ? {
-                connect: args.data.candidate,
-              }
-            : undefined,
 
           jobPosition: args.data.jobPosition
             ? {
@@ -112,6 +139,11 @@ export class InterviewResolverBase {
   }
 
   @graphql.Mutation(() => Interview)
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "delete",
+    possession: "any",
+  })
   async deleteInterview(
     @graphql.Args() args: DeleteInterviewArgs
   ): Promise<Interview | null> {
@@ -127,24 +159,15 @@ export class InterviewResolverBase {
     }
   }
 
-  @graphql.ResolveField(() => Candidate, {
-    nullable: true,
-    name: "candidate",
-  })
-  async getCandidate(
-    @graphql.Parent() parent: Interview
-  ): Promise<Candidate | null> {
-    const result = await this.service.getCandidate(parent.id);
-
-    if (!result) {
-      return null;
-    }
-    return result;
-  }
-
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.ResolveField(() => JobPosition, {
     nullable: true,
     name: "jobPosition",
+  })
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "read",
+    possession: "any",
   })
   async getJobPosition(
     @graphql.Parent() parent: Interview

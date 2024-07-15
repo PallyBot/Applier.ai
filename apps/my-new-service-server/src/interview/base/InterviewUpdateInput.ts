@@ -11,31 +11,18 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { CandidateWhereUniqueInput } from "../../candidate/base/CandidateWhereUniqueInput";
 import {
-  ValidateNested,
-  IsOptional,
   IsDate,
+  IsOptional,
   IsString,
   MaxLength,
+  ValidateNested,
 } from "class-validator";
 import { Type } from "class-transformer";
 import { JobPositionWhereUniqueInput } from "../../jobPosition/base/JobPositionWhereUniqueInput";
 
 @InputType()
 class InterviewUpdateInput {
-  @ApiProperty({
-    required: false,
-    type: () => CandidateWhereUniqueInput,
-  })
-  @ValidateNested()
-  @Type(() => CandidateWhereUniqueInput)
-  @IsOptional()
-  @Field(() => CandidateWhereUniqueInput, {
-    nullable: true,
-  })
-  candidate?: CandidateWhereUniqueInput | null;
-
   @ApiProperty({
     required: false,
   })
@@ -70,6 +57,17 @@ class InterviewUpdateInput {
     nullable: true,
   })
   interviewer?: string | null;
+
+  @ApiProperty({
+    required: false,
+    type: String,
+  })
+  @IsString()
+  @IsOptional()
+  @Field(() => String, {
+    nullable: true,
+  })
+  candidate?: string | null;
 
   @ApiProperty({
     required: false,

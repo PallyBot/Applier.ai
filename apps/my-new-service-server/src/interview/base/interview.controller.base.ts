@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { InterviewService } from "../interview.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { InterviewCreateInput } from "./InterviewCreateInput";
 import { Interview } from "./Interview";
 import { InterviewFindManyArgs } from "./InterviewFindManyArgs";
 import { InterviewWhereUniqueInput } from "./InterviewWhereUniqueInput";
 import { InterviewUpdateInput } from "./InterviewUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class InterviewControllerBase {
-  constructor(protected readonly service: InterviewService) {}
+  constructor(
+    protected readonly service: InterviewService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Interview })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: InterviewCreateInput,
   })
@@ -61,9 +79,18 @@ export class InterviewControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Interview] })
   @ApiNestedQuery(InterviewFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async interviews(@common.Req() request: Request): Promise<Interview[]> {
     const args = plainToClass(InterviewFindManyArgs, request.query);
     return this.service.interviews({
@@ -86,9 +113,18 @@ export class InterviewControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Interview })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async interview(
     @common.Param() params: InterviewWhereUniqueInput
   ): Promise<Interview | null> {
@@ -118,9 +154,18 @@ export class InterviewControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Interview })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: InterviewUpdateInput,
   })
@@ -169,6 +214,14 @@ export class InterviewControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Interview })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteInterview(
     @common.Param() params: InterviewWhereUniqueInput
   ): Promise<Interview | null> {

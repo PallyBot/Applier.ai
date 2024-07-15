@@ -16,7 +16,11 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { RankingAlgorithmService } from "../rankingAlgorithm.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { RankingAlgorithmCreateInput } from "./RankingAlgorithmCreateInput";
 import { RankingAlgorithm } from "./RankingAlgorithm";
 import { RankingAlgorithmFindManyArgs } from "./RankingAlgorithmFindManyArgs";
@@ -26,10 +30,24 @@ import { CandidateScoreFindManyArgs } from "../../candidateScore/base/CandidateS
 import { CandidateScore } from "../../candidateScore/base/CandidateScore";
 import { CandidateScoreWhereUniqueInput } from "../../candidateScore/base/CandidateScoreWhereUniqueInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class RankingAlgorithmControllerBase {
-  constructor(protected readonly service: RankingAlgorithmService) {}
+  constructor(
+    protected readonly service: RankingAlgorithmService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: RankingAlgorithm })
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: RankingAlgorithmCreateInput,
   })
@@ -48,9 +66,18 @@ export class RankingAlgorithmControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [RankingAlgorithm] })
   @ApiNestedQuery(RankingAlgorithmFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async rankingAlgorithms(
     @common.Req() request: Request
   ): Promise<RankingAlgorithm[]> {
@@ -67,9 +94,18 @@ export class RankingAlgorithmControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: RankingAlgorithm })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async rankingAlgorithm(
     @common.Param() params: RankingAlgorithmWhereUniqueInput
   ): Promise<RankingAlgorithm | null> {
@@ -91,9 +127,18 @@ export class RankingAlgorithmControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: RankingAlgorithm })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: RankingAlgorithmUpdateInput,
   })
@@ -126,6 +171,14 @@ export class RankingAlgorithmControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: RankingAlgorithm })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteRankingAlgorithm(
     @common.Param() params: RankingAlgorithmWhereUniqueInput
   ): Promise<RankingAlgorithm | null> {
@@ -150,8 +203,14 @@ export class RankingAlgorithmControllerBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id/candidateScores")
   @ApiNestedQuery(CandidateScoreFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "CandidateScore",
+    action: "read",
+    possession: "any",
+  })
   async findCandidateScores(
     @common.Req() request: Request,
     @common.Param() params: RankingAlgorithmWhereUniqueInput
@@ -182,6 +241,11 @@ export class RankingAlgorithmControllerBase {
   }
 
   @common.Post("/:id/candidateScores")
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "update",
+    possession: "any",
+  })
   async connectCandidateScores(
     @common.Param() params: RankingAlgorithmWhereUniqueInput,
     @common.Body() body: CandidateScoreWhereUniqueInput[]
@@ -199,6 +263,11 @@ export class RankingAlgorithmControllerBase {
   }
 
   @common.Patch("/:id/candidateScores")
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "update",
+    possession: "any",
+  })
   async updateCandidateScores(
     @common.Param() params: RankingAlgorithmWhereUniqueInput,
     @common.Body() body: CandidateScoreWhereUniqueInput[]
@@ -216,6 +285,11 @@ export class RankingAlgorithmControllerBase {
   }
 
   @common.Delete("/:id/candidateScores")
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "update",
+    possession: "any",
+  })
   async disconnectCandidateScores(
     @common.Param() params: RankingAlgorithmWhereUniqueInput,
     @common.Body() body: CandidateScoreWhereUniqueInput[]

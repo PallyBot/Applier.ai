@@ -16,7 +16,11 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { InteractionService } from "../interaction.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { InteractionCreateInput } from "./InteractionCreateInput";
 import { Interaction } from "./Interaction";
 import { InteractionFindManyArgs } from "./InteractionFindManyArgs";
@@ -29,10 +33,24 @@ import { MessageFindManyArgs } from "../../message/base/MessageFindManyArgs";
 import { Message } from "../../message/base/Message";
 import { MessageWhereUniqueInput } from "../../message/base/MessageWhereUniqueInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class InteractionControllerBase {
-  constructor(protected readonly service: InteractionService) {}
+  constructor(
+    protected readonly service: InteractionService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Interaction })
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: InteractionCreateInput,
   })
@@ -51,9 +69,18 @@ export class InteractionControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Interaction] })
   @ApiNestedQuery(InteractionFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async interactions(@common.Req() request: Request): Promise<Interaction[]> {
     const args = plainToClass(InteractionFindManyArgs, request.query);
     return this.service.interactions({
@@ -68,9 +95,18 @@ export class InteractionControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Interaction })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async interaction(
     @common.Param() params: InteractionWhereUniqueInput
   ): Promise<Interaction | null> {
@@ -92,9 +128,18 @@ export class InteractionControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Interaction })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: InteractionUpdateInput,
   })
@@ -127,6 +172,14 @@ export class InteractionControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Interaction })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteInteraction(
     @common.Param() params: InteractionWhereUniqueInput
   ): Promise<Interaction | null> {
@@ -151,8 +204,14 @@ export class InteractionControllerBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id/voiceRecordings")
   @ApiNestedQuery(VoiceRecordingFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "read",
+    possession: "any",
+  })
   async findVoiceRecordings(
     @common.Req() request: Request,
     @common.Param() params: InteractionWhereUniqueInput
@@ -183,6 +242,11 @@ export class InteractionControllerBase {
   }
 
   @common.Post("/:id/voiceRecordings")
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
   async connectVoiceRecordings(
     @common.Param() params: InteractionWhereUniqueInput,
     @common.Body() body: VoiceRecordingWhereUniqueInput[]
@@ -200,6 +264,11 @@ export class InteractionControllerBase {
   }
 
   @common.Patch("/:id/voiceRecordings")
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
   async updateVoiceRecordings(
     @common.Param() params: InteractionWhereUniqueInput,
     @common.Body() body: VoiceRecordingWhereUniqueInput[]
@@ -217,6 +286,11 @@ export class InteractionControllerBase {
   }
 
   @common.Delete("/:id/voiceRecordings")
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
   async disconnectVoiceRecordings(
     @common.Param() params: InteractionWhereUniqueInput,
     @common.Body() body: VoiceRecordingWhereUniqueInput[]
@@ -233,8 +307,14 @@ export class InteractionControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id/messages")
   @ApiNestedQuery(MessageFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Message",
+    action: "read",
+    possession: "any",
+  })
   async findMessages(
     @common.Req() request: Request,
     @common.Param() params: InteractionWhereUniqueInput
@@ -265,6 +345,11 @@ export class InteractionControllerBase {
   }
 
   @common.Post("/:id/messages")
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
   async connectMessages(
     @common.Param() params: InteractionWhereUniqueInput,
     @common.Body() body: MessageWhereUniqueInput[]
@@ -282,6 +367,11 @@ export class InteractionControllerBase {
   }
 
   @common.Patch("/:id/messages")
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
   async updateMessages(
     @common.Param() params: InteractionWhereUniqueInput,
     @common.Body() body: MessageWhereUniqueInput[]
@@ -299,6 +389,11 @@ export class InteractionControllerBase {
   }
 
   @common.Delete("/:id/messages")
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
   async disconnectMessages(
     @common.Param() params: InteractionWhereUniqueInput,
     @common.Body() body: MessageWhereUniqueInput[]

@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { Recruiter } from "./Recruiter";
 import { RecruiterCountArgs } from "./RecruiterCountArgs";
 import { RecruiterFindManyArgs } from "./RecruiterFindManyArgs";
@@ -21,10 +27,20 @@ import { CreateRecruiterArgs } from "./CreateRecruiterArgs";
 import { UpdateRecruiterArgs } from "./UpdateRecruiterArgs";
 import { DeleteRecruiterArgs } from "./DeleteRecruiterArgs";
 import { RecruiterService } from "../recruiter.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Recruiter)
 export class RecruiterResolverBase {
-  constructor(protected readonly service: RecruiterService) {}
+  constructor(
+    protected readonly service: RecruiterService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "Recruiter",
+    action: "read",
+    possession: "any",
+  })
   async _recruitersMeta(
     @graphql.Args() args: RecruiterCountArgs
   ): Promise<MetaQueryPayload> {
@@ -34,14 +50,26 @@ export class RecruiterResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [Recruiter])
+  @nestAccessControl.UseRoles({
+    resource: "Recruiter",
+    action: "read",
+    possession: "any",
+  })
   async recruiters(
     @graphql.Args() args: RecruiterFindManyArgs
   ): Promise<Recruiter[]> {
     return this.service.recruiters(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => Recruiter, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "Recruiter",
+    action: "read",
+    possession: "own",
+  })
   async recruiter(
     @graphql.Args() args: RecruiterFindUniqueArgs
   ): Promise<Recruiter | null> {
@@ -52,7 +80,13 @@ export class RecruiterResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Recruiter)
+  @nestAccessControl.UseRoles({
+    resource: "Recruiter",
+    action: "create",
+    possession: "any",
+  })
   async createRecruiter(
     @graphql.Args() args: CreateRecruiterArgs
   ): Promise<Recruiter> {
@@ -62,7 +96,13 @@ export class RecruiterResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Recruiter)
+  @nestAccessControl.UseRoles({
+    resource: "Recruiter",
+    action: "update",
+    possession: "any",
+  })
   async updateRecruiter(
     @graphql.Args() args: UpdateRecruiterArgs
   ): Promise<Recruiter | null> {
@@ -82,6 +122,11 @@ export class RecruiterResolverBase {
   }
 
   @graphql.Mutation(() => Recruiter)
+  @nestAccessControl.UseRoles({
+    resource: "Recruiter",
+    action: "delete",
+    possession: "any",
+  })
   async deleteRecruiter(
     @graphql.Args() args: DeleteRecruiterArgs
   ): Promise<Recruiter | null> {

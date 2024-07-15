@@ -16,7 +16,11 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { JobRequirementService } from "../jobRequirement.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { JobRequirementCreateInput } from "./JobRequirementCreateInput";
 import { JobRequirement } from "./JobRequirement";
 import { JobRequirementFindManyArgs } from "./JobRequirementFindManyArgs";
@@ -26,10 +30,24 @@ import { AttachmentFindManyArgs } from "../../attachment/base/AttachmentFindMany
 import { Attachment } from "../../attachment/base/Attachment";
 import { AttachmentWhereUniqueInput } from "../../attachment/base/AttachmentWhereUniqueInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class JobRequirementControllerBase {
-  constructor(protected readonly service: JobRequirementService) {}
+  constructor(
+    protected readonly service: JobRequirementService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: JobRequirement })
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: JobRequirementCreateInput,
   })
@@ -49,9 +67,18 @@ export class JobRequirementControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [JobRequirement] })
   @ApiNestedQuery(JobRequirementFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async jobRequirements(
     @common.Req() request: Request
   ): Promise<JobRequirement[]> {
@@ -69,9 +96,18 @@ export class JobRequirementControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: JobRequirement })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async jobRequirement(
     @common.Param() params: JobRequirementWhereUniqueInput
   ): Promise<JobRequirement | null> {
@@ -94,9 +130,18 @@ export class JobRequirementControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: JobRequirement })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: JobRequirementUpdateInput,
   })
@@ -130,6 +175,14 @@ export class JobRequirementControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: JobRequirement })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteJobRequirement(
     @common.Param() params: JobRequirementWhereUniqueInput
   ): Promise<JobRequirement | null> {
@@ -155,8 +208,14 @@ export class JobRequirementControllerBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id/attachments")
   @ApiNestedQuery(AttachmentFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Attachment",
+    action: "read",
+    possession: "any",
+  })
   async findAttachments(
     @common.Req() request: Request,
     @common.Param() params: JobRequirementWhereUniqueInput
@@ -187,6 +246,11 @@ export class JobRequirementControllerBase {
   }
 
   @common.Post("/:id/attachments")
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "update",
+    possession: "any",
+  })
   async connectAttachments(
     @common.Param() params: JobRequirementWhereUniqueInput,
     @common.Body() body: AttachmentWhereUniqueInput[]
@@ -204,6 +268,11 @@ export class JobRequirementControllerBase {
   }
 
   @common.Patch("/:id/attachments")
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "update",
+    possession: "any",
+  })
   async updateAttachments(
     @common.Param() params: JobRequirementWhereUniqueInput,
     @common.Body() body: AttachmentWhereUniqueInput[]
@@ -221,6 +290,11 @@ export class JobRequirementControllerBase {
   }
 
   @common.Delete("/:id/attachments")
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "update",
+    possession: "any",
+  })
   async disconnectAttachments(
     @common.Param() params: JobRequirementWhereUniqueInput,
     @common.Body() body: AttachmentWhereUniqueInput[]

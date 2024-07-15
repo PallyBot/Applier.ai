@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { CandidateApplicationService } from "../candidateApplication.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { CandidateApplicationCreateInput } from "./CandidateApplicationCreateInput";
 import { CandidateApplication } from "./CandidateApplication";
 import { CandidateApplicationFindManyArgs } from "./CandidateApplicationFindManyArgs";
 import { CandidateApplicationWhereUniqueInput } from "./CandidateApplicationWhereUniqueInput";
 import { CandidateApplicationUpdateInput } from "./CandidateApplicationUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class CandidateApplicationControllerBase {
-  constructor(protected readonly service: CandidateApplicationService) {}
+  constructor(
+    protected readonly service: CandidateApplicationService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: CandidateApplication })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: CandidateApplicationCreateInput,
   })
@@ -46,9 +64,18 @@ export class CandidateApplicationControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [CandidateApplication] })
   @ApiNestedQuery(CandidateApplicationFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidateApplications(
     @common.Req() request: Request
   ): Promise<CandidateApplication[]> {
@@ -66,9 +93,18 @@ export class CandidateApplicationControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: CandidateApplication })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidateApplication(
     @common.Param() params: CandidateApplicationWhereUniqueInput
   ): Promise<CandidateApplication | null> {
@@ -91,9 +127,18 @@ export class CandidateApplicationControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: CandidateApplication })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: CandidateApplicationUpdateInput,
   })
@@ -127,6 +172,14 @@ export class CandidateApplicationControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: CandidateApplication })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteCandidateApplication(
     @common.Param() params: CandidateApplicationWhereUniqueInput
   ): Promise<CandidateApplication | null> {

@@ -29,6 +29,10 @@ import { InteractionList } from "./interaction/InteractionList";
 import { InteractionCreate } from "./interaction/InteractionCreate";
 import { InteractionEdit } from "./interaction/InteractionEdit";
 import { InteractionShow } from "./interaction/InteractionShow";
+import { VoiceRecordingList } from "./voiceRecording/VoiceRecordingList";
+import { VoiceRecordingCreate } from "./voiceRecording/VoiceRecordingCreate";
+import { VoiceRecordingEdit } from "./voiceRecording/VoiceRecordingEdit";
+import { VoiceRecordingShow } from "./voiceRecording/VoiceRecordingShow";
 import { JobRequirementList } from "./jobRequirement/JobRequirementList";
 import { JobRequirementCreate } from "./jobRequirement/JobRequirementCreate";
 import { JobRequirementEdit } from "./jobRequirement/JobRequirementEdit";
@@ -37,10 +41,6 @@ import { AttachmentList } from "./attachment/AttachmentList";
 import { AttachmentCreate } from "./attachment/AttachmentCreate";
 import { AttachmentEdit } from "./attachment/AttachmentEdit";
 import { AttachmentShow } from "./attachment/AttachmentShow";
-import { VoiceRecordingList } from "./voiceRecording/VoiceRecordingList";
-import { VoiceRecordingCreate } from "./voiceRecording/VoiceRecordingCreate";
-import { VoiceRecordingEdit } from "./voiceRecording/VoiceRecordingEdit";
-import { VoiceRecordingShow } from "./voiceRecording/VoiceRecordingShow";
 import { CandidateScoreList } from "./candidateScore/CandidateScoreList";
 import { CandidateScoreCreate } from "./candidateScore/CandidateScoreCreate";
 import { CandidateScoreEdit } from "./candidateScore/CandidateScoreEdit";
@@ -57,6 +57,22 @@ import { ResumeList } from "./resume/ResumeList";
 import { ResumeCreate } from "./resume/ResumeCreate";
 import { ResumeEdit } from "./resume/ResumeEdit";
 import { ResumeShow } from "./resume/ResumeShow";
+import { ProductList } from "./product/ProductList";
+import { ProductCreate } from "./product/ProductCreate";
+import { ProductEdit } from "./product/ProductEdit";
+import { ProductShow } from "./product/ProductShow";
+import { OrderList } from "./order/OrderList";
+import { OrderCreate } from "./order/OrderCreate";
+import { OrderEdit } from "./order/OrderEdit";
+import { OrderShow } from "./order/OrderShow";
+import { NotificationList } from "./notification/NotificationList";
+import { NotificationCreate } from "./notification/NotificationCreate";
+import { NotificationEdit } from "./notification/NotificationEdit";
+import { NotificationShow } from "./notification/NotificationShow";
+import { UserList } from "./user/UserList";
+import { UserCreate } from "./user/UserCreate";
+import { UserEdit } from "./user/UserEdit";
+import { UserShow } from "./user/UserShow";
 import { jwtAuthProvider } from "./auth-provider/ra-auth-jwt";
 
 const App = (): React.ReactElement => {
@@ -126,6 +142,13 @@ const App = (): React.ReactElement => {
           show={InteractionShow}
         />
         <Resource
+          name="VoiceRecording"
+          list={VoiceRecordingList}
+          edit={VoiceRecordingEdit}
+          create={VoiceRecordingCreate}
+          show={VoiceRecordingShow}
+        />
+        <Resource
           name="JobRequirement"
           list={JobRequirementList}
           edit={JobRequirementEdit}
@@ -138,13 +161,6 @@ const App = (): React.ReactElement => {
           edit={AttachmentEdit}
           create={AttachmentCreate}
           show={AttachmentShow}
-        />
-        <Resource
-          name="VoiceRecording"
-          list={VoiceRecordingList}
-          edit={VoiceRecordingEdit}
-          create={VoiceRecordingCreate}
-          show={VoiceRecordingShow}
         />
         <Resource
           name="CandidateScore"
@@ -173,6 +189,34 @@ const App = (): React.ReactElement => {
           edit={ResumeEdit}
           create={ResumeCreate}
           show={ResumeShow}
+        />
+        <Resource
+          name="Product"
+          list={ProductList}
+          edit={ProductEdit}
+          create={ProductCreate}
+          show={ProductShow}
+        />
+        <Resource
+          name="Order"
+          list={OrderList}
+          edit={OrderEdit}
+          create={OrderCreate}
+          show={OrderShow}
+        />
+        <Resource
+          name="Notification"
+          list={NotificationList}
+          edit={NotificationEdit}
+          create={NotificationCreate}
+          show={NotificationShow}
+        />
+        <Resource
+          name="User"
+          list={UserList}
+          edit={UserEdit}
+          create={UserCreate}
+          show={UserShow}
         />
       </Admin>
     </div>

@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { CandidateScoreService } from "../candidateScore.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { CandidateScoreCreateInput } from "./CandidateScoreCreateInput";
 import { CandidateScore } from "./CandidateScore";
 import { CandidateScoreFindManyArgs } from "./CandidateScoreFindManyArgs";
 import { CandidateScoreWhereUniqueInput } from "./CandidateScoreWhereUniqueInput";
 import { CandidateScoreUpdateInput } from "./CandidateScoreUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class CandidateScoreControllerBase {
-  constructor(protected readonly service: CandidateScoreService) {}
+  constructor(
+    protected readonly service: CandidateScoreService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: CandidateScore })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateScore",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: CandidateScoreCreateInput,
   })
@@ -59,9 +77,18 @@ export class CandidateScoreControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [CandidateScore] })
   @ApiNestedQuery(CandidateScoreFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "CandidateScore",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidateScores(
     @common.Req() request: Request
   ): Promise<CandidateScore[]> {
@@ -84,9 +111,18 @@ export class CandidateScoreControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: CandidateScore })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateScore",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidateScore(
     @common.Param() params: CandidateScoreWhereUniqueInput
   ): Promise<CandidateScore | null> {
@@ -114,9 +150,18 @@ export class CandidateScoreControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: CandidateScore })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateScore",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: CandidateScoreUpdateInput,
   })
@@ -163,6 +208,14 @@ export class CandidateScoreControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: CandidateScore })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateScore",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteCandidateScore(
     @common.Param() params: CandidateScoreWhereUniqueInput
   ): Promise<CandidateScore | null> {

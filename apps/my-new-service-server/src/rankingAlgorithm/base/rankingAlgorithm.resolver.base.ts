@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { RankingAlgorithm } from "./RankingAlgorithm";
 import { RankingAlgorithmCountArgs } from "./RankingAlgorithmCountArgs";
 import { RankingAlgorithmFindManyArgs } from "./RankingAlgorithmFindManyArgs";
@@ -23,10 +29,20 @@ import { DeleteRankingAlgorithmArgs } from "./DeleteRankingAlgorithmArgs";
 import { CandidateScoreFindManyArgs } from "../../candidateScore/base/CandidateScoreFindManyArgs";
 import { CandidateScore } from "../../candidateScore/base/CandidateScore";
 import { RankingAlgorithmService } from "../rankingAlgorithm.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => RankingAlgorithm)
 export class RankingAlgorithmResolverBase {
-  constructor(protected readonly service: RankingAlgorithmService) {}
+  constructor(
+    protected readonly service: RankingAlgorithmService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "read",
+    possession: "any",
+  })
   async _rankingAlgorithmsMeta(
     @graphql.Args() args: RankingAlgorithmCountArgs
   ): Promise<MetaQueryPayload> {
@@ -36,14 +52,26 @@ export class RankingAlgorithmResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [RankingAlgorithm])
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "read",
+    possession: "any",
+  })
   async rankingAlgorithms(
     @graphql.Args() args: RankingAlgorithmFindManyArgs
   ): Promise<RankingAlgorithm[]> {
     return this.service.rankingAlgorithms(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => RankingAlgorithm, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "read",
+    possession: "own",
+  })
   async rankingAlgorithm(
     @graphql.Args() args: RankingAlgorithmFindUniqueArgs
   ): Promise<RankingAlgorithm | null> {
@@ -54,7 +82,13 @@ export class RankingAlgorithmResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => RankingAlgorithm)
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "create",
+    possession: "any",
+  })
   async createRankingAlgorithm(
     @graphql.Args() args: CreateRankingAlgorithmArgs
   ): Promise<RankingAlgorithm> {
@@ -64,7 +98,13 @@ export class RankingAlgorithmResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => RankingAlgorithm)
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "update",
+    possession: "any",
+  })
   async updateRankingAlgorithm(
     @graphql.Args() args: UpdateRankingAlgorithmArgs
   ): Promise<RankingAlgorithm | null> {
@@ -84,6 +124,11 @@ export class RankingAlgorithmResolverBase {
   }
 
   @graphql.Mutation(() => RankingAlgorithm)
+  @nestAccessControl.UseRoles({
+    resource: "RankingAlgorithm",
+    action: "delete",
+    possession: "any",
+  })
   async deleteRankingAlgorithm(
     @graphql.Args() args: DeleteRankingAlgorithmArgs
   ): Promise<RankingAlgorithm | null> {
@@ -99,7 +144,13 @@ export class RankingAlgorithmResolverBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.ResolveField(() => [CandidateScore], { name: "candidateScores" })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateScore",
+    action: "read",
+    possession: "any",
+  })
   async findCandidateScores(
     @graphql.Parent() parent: RankingAlgorithm,
     @graphql.Args() args: CandidateScoreFindManyArgs

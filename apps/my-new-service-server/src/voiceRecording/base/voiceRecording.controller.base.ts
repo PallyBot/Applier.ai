@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { VoiceRecordingService } from "../voiceRecording.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { VoiceRecordingCreateInput } from "./VoiceRecordingCreateInput";
 import { VoiceRecording } from "./VoiceRecording";
 import { VoiceRecordingFindManyArgs } from "./VoiceRecordingFindManyArgs";
 import { VoiceRecordingWhereUniqueInput } from "./VoiceRecordingWhereUniqueInput";
 import { VoiceRecordingUpdateInput } from "./VoiceRecordingUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class VoiceRecordingControllerBase {
-  constructor(protected readonly service: VoiceRecordingService) {}
+  constructor(
+    protected readonly service: VoiceRecordingService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: VoiceRecording })
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: VoiceRecordingCreateInput,
   })
@@ -59,9 +77,18 @@ export class VoiceRecordingControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [VoiceRecording] })
   @ApiNestedQuery(VoiceRecordingFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async voiceRecordings(
     @common.Req() request: Request
   ): Promise<VoiceRecording[]> {
@@ -84,9 +111,18 @@ export class VoiceRecordingControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: VoiceRecording })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async voiceRecording(
     @common.Param() params: VoiceRecordingWhereUniqueInput
   ): Promise<VoiceRecording | null> {
@@ -114,9 +150,18 @@ export class VoiceRecordingControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: VoiceRecording })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: VoiceRecordingUpdateInput,
   })
@@ -163,6 +208,14 @@ export class VoiceRecordingControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: VoiceRecording })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteVoiceRecording(
     @common.Param() params: VoiceRecordingWhereUniqueInput
   ): Promise<VoiceRecording | null> {

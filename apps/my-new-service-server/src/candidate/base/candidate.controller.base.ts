@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { CandidateService } from "../candidate.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { CandidateCreateInput } from "./CandidateCreateInput";
 import { Candidate } from "./Candidate";
 import { CandidateFindManyArgs } from "./CandidateFindManyArgs";
 import { CandidateWhereUniqueInput } from "./CandidateWhereUniqueInput";
 import { CandidateUpdateInput } from "./CandidateUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class CandidateControllerBase {
-  constructor(protected readonly service: CandidateService) {}
+  constructor(
+    protected readonly service: CandidateService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Candidate })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: CandidateCreateInput,
   })
@@ -50,9 +68,18 @@ export class CandidateControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Candidate] })
   @ApiNestedQuery(CandidateFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidates(@common.Req() request: Request): Promise<Candidate[]> {
     const args = plainToClass(CandidateFindManyArgs, request.query);
     return this.service.candidates({
@@ -72,9 +99,18 @@ export class CandidateControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Candidate })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async candidate(
     @common.Param() params: CandidateWhereUniqueInput
   ): Promise<Candidate | null> {
@@ -101,9 +137,18 @@ export class CandidateControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Candidate })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: CandidateUpdateInput,
   })
@@ -141,6 +186,14 @@ export class CandidateControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Candidate })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Candidate",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteCandidate(
     @common.Param() params: CandidateWhereUniqueInput
   ): Promise<Candidate | null> {

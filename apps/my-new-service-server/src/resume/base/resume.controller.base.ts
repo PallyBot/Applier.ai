@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { ResumeService } from "../resume.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { ResumeCreateInput } from "./ResumeCreateInput";
 import { Resume } from "./Resume";
 import { ResumeFindManyArgs } from "./ResumeFindManyArgs";
 import { ResumeWhereUniqueInput } from "./ResumeWhereUniqueInput";
 import { ResumeUpdateInput } from "./ResumeUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class ResumeControllerBase {
-  constructor(protected readonly service: ResumeService) {}
+  constructor(
+    protected readonly service: ResumeService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Resume })
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: ResumeCreateInput,
   })
@@ -43,9 +61,18 @@ export class ResumeControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Resume] })
   @ApiNestedQuery(ResumeFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async resumes(@common.Req() request: Request): Promise<Resume[]> {
     const args = plainToClass(ResumeFindManyArgs, request.query);
     return this.service.resumes({
@@ -60,9 +87,18 @@ export class ResumeControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Resume })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async resume(
     @common.Param() params: ResumeWhereUniqueInput
   ): Promise<Resume | null> {
@@ -84,9 +120,18 @@ export class ResumeControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Resume })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: ResumeUpdateInput,
   })
@@ -119,6 +164,14 @@ export class ResumeControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Resume })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteResume(
     @common.Param() params: ResumeWhereUniqueInput
   ): Promise<Resume | null> {

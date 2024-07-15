@@ -16,17 +16,35 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { AttachmentService } from "../attachment.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { AttachmentCreateInput } from "./AttachmentCreateInput";
 import { Attachment } from "./Attachment";
 import { AttachmentFindManyArgs } from "./AttachmentFindManyArgs";
 import { AttachmentWhereUniqueInput } from "./AttachmentWhereUniqueInput";
 import { AttachmentUpdateInput } from "./AttachmentUpdateInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class AttachmentControllerBase {
-  constructor(protected readonly service: AttachmentService) {}
+  constructor(
+    protected readonly service: AttachmentService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Attachment })
+  @nestAccessControl.UseRoles({
+    resource: "Attachment",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: AttachmentCreateInput,
   })
@@ -59,9 +77,18 @@ export class AttachmentControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Attachment] })
   @ApiNestedQuery(AttachmentFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Attachment",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async attachments(@common.Req() request: Request): Promise<Attachment[]> {
     const args = plainToClass(AttachmentFindManyArgs, request.query);
     return this.service.attachments({
@@ -82,9 +109,18 @@ export class AttachmentControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Attachment })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Attachment",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async attachment(
     @common.Param() params: AttachmentWhereUniqueInput
   ): Promise<Attachment | null> {
@@ -112,9 +148,18 @@ export class AttachmentControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Attachment })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Attachment",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: AttachmentUpdateInput,
   })
@@ -161,6 +206,14 @@ export class AttachmentControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Attachment })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Attachment",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteAttachment(
     @common.Param() params: AttachmentWhereUniqueInput
   ): Promise<Attachment | null> {

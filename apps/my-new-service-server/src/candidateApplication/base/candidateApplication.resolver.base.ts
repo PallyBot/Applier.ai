@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { CandidateApplication } from "./CandidateApplication";
 import { CandidateApplicationCountArgs } from "./CandidateApplicationCountArgs";
 import { CandidateApplicationFindManyArgs } from "./CandidateApplicationFindManyArgs";
@@ -21,10 +27,20 @@ import { CreateCandidateApplicationArgs } from "./CreateCandidateApplicationArgs
 import { UpdateCandidateApplicationArgs } from "./UpdateCandidateApplicationArgs";
 import { DeleteCandidateApplicationArgs } from "./DeleteCandidateApplicationArgs";
 import { CandidateApplicationService } from "../candidateApplication.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => CandidateApplication)
 export class CandidateApplicationResolverBase {
-  constructor(protected readonly service: CandidateApplicationService) {}
+  constructor(
+    protected readonly service: CandidateApplicationService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "read",
+    possession: "any",
+  })
   async _candidateApplicationsMeta(
     @graphql.Args() args: CandidateApplicationCountArgs
   ): Promise<MetaQueryPayload> {
@@ -34,14 +50,26 @@ export class CandidateApplicationResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [CandidateApplication])
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "read",
+    possession: "any",
+  })
   async candidateApplications(
     @graphql.Args() args: CandidateApplicationFindManyArgs
   ): Promise<CandidateApplication[]> {
     return this.service.candidateApplications(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => CandidateApplication, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "read",
+    possession: "own",
+  })
   async candidateApplication(
     @graphql.Args() args: CandidateApplicationFindUniqueArgs
   ): Promise<CandidateApplication | null> {
@@ -52,7 +80,13 @@ export class CandidateApplicationResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => CandidateApplication)
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "create",
+    possession: "any",
+  })
   async createCandidateApplication(
     @graphql.Args() args: CreateCandidateApplicationArgs
   ): Promise<CandidateApplication> {
@@ -62,7 +96,13 @@ export class CandidateApplicationResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => CandidateApplication)
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "update",
+    possession: "any",
+  })
   async updateCandidateApplication(
     @graphql.Args() args: UpdateCandidateApplicationArgs
   ): Promise<CandidateApplication | null> {
@@ -82,6 +122,11 @@ export class CandidateApplicationResolverBase {
   }
 
   @graphql.Mutation(() => CandidateApplication)
+  @nestAccessControl.UseRoles({
+    resource: "CandidateApplication",
+    action: "delete",
+    possession: "any",
+  })
   async deleteCandidateApplication(
     @graphql.Args() args: DeleteCandidateApplicationArgs
   ): Promise<CandidateApplication | null> {

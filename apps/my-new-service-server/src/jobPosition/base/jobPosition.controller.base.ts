@@ -16,7 +16,11 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { JobPositionService } from "../jobPosition.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { JobPositionCreateInput } from "./JobPositionCreateInput";
 import { JobPosition } from "./JobPosition";
 import { JobPositionFindManyArgs } from "./JobPositionFindManyArgs";
@@ -26,10 +30,24 @@ import { InterviewFindManyArgs } from "../../interview/base/InterviewFindManyArg
 import { Interview } from "../../interview/base/Interview";
 import { InterviewWhereUniqueInput } from "../../interview/base/InterviewWhereUniqueInput";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class JobPositionControllerBase {
-  constructor(protected readonly service: JobPositionService) {}
+  constructor(
+    protected readonly service: JobPositionService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: JobPosition })
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: JobPositionCreateInput,
   })
@@ -49,9 +67,18 @@ export class JobPositionControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [JobPosition] })
   @ApiNestedQuery(JobPositionFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async jobPositions(@common.Req() request: Request): Promise<JobPosition[]> {
     const args = plainToClass(JobPositionFindManyArgs, request.query);
     return this.service.jobPositions({
@@ -67,9 +94,18 @@ export class JobPositionControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: JobPosition })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async jobPosition(
     @common.Param() params: JobPositionWhereUniqueInput
   ): Promise<JobPosition | null> {
@@ -92,9 +128,18 @@ export class JobPositionControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: JobPosition })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   @swagger.ApiBody({
     type: JobPositionUpdateInput,
   })
@@ -128,6 +173,14 @@ export class JobPositionControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: JobPosition })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async deleteJobPosition(
     @common.Param() params: JobPositionWhereUniqueInput
   ): Promise<JobPosition | null> {
@@ -153,8 +206,14 @@ export class JobPositionControllerBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id/interviews")
   @ApiNestedQuery(InterviewFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Interview",
+    action: "read",
+    possession: "any",
+  })
   async findInterviews(
     @common.Req() request: Request,
     @common.Param() params: JobPositionWhereUniqueInput
@@ -187,6 +246,11 @@ export class JobPositionControllerBase {
   }
 
   @common.Post("/:id/interviews")
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "update",
+    possession: "any",
+  })
   async connectInterviews(
     @common.Param() params: JobPositionWhereUniqueInput,
     @common.Body() body: InterviewWhereUniqueInput[]
@@ -204,6 +268,11 @@ export class JobPositionControllerBase {
   }
 
   @common.Patch("/:id/interviews")
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "update",
+    possession: "any",
+  })
   async updateInterviews(
     @common.Param() params: JobPositionWhereUniqueInput,
     @common.Body() body: InterviewWhereUniqueInput[]
@@ -221,6 +290,11 @@ export class JobPositionControllerBase {
   }
 
   @common.Delete("/:id/interviews")
+  @nestAccessControl.UseRoles({
+    resource: "JobPosition",
+    action: "update",
+    possession: "any",
+  })
   async disconnectInterviews(
     @common.Param() params: JobPositionWhereUniqueInput,
     @common.Body() body: InterviewWhereUniqueInput[]

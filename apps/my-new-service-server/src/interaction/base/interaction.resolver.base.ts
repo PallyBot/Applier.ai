@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { Interaction } from "./Interaction";
 import { InteractionCountArgs } from "./InteractionCountArgs";
 import { InteractionFindManyArgs } from "./InteractionFindManyArgs";
@@ -25,10 +31,20 @@ import { VoiceRecording } from "../../voiceRecording/base/VoiceRecording";
 import { MessageFindManyArgs } from "../../message/base/MessageFindManyArgs";
 import { Message } from "../../message/base/Message";
 import { InteractionService } from "../interaction.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Interaction)
 export class InteractionResolverBase {
-  constructor(protected readonly service: InteractionService) {}
+  constructor(
+    protected readonly service: InteractionService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "read",
+    possession: "any",
+  })
   async _interactionsMeta(
     @graphql.Args() args: InteractionCountArgs
   ): Promise<MetaQueryPayload> {
@@ -38,14 +54,26 @@ export class InteractionResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [Interaction])
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "read",
+    possession: "any",
+  })
   async interactions(
     @graphql.Args() args: InteractionFindManyArgs
   ): Promise<Interaction[]> {
     return this.service.interactions(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => Interaction, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "read",
+    possession: "own",
+  })
   async interaction(
     @graphql.Args() args: InteractionFindUniqueArgs
   ): Promise<Interaction | null> {
@@ -56,7 +84,13 @@ export class InteractionResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Interaction)
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "create",
+    possession: "any",
+  })
   async createInteraction(
     @graphql.Args() args: CreateInteractionArgs
   ): Promise<Interaction> {
@@ -66,7 +100,13 @@ export class InteractionResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Interaction)
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "update",
+    possession: "any",
+  })
   async updateInteraction(
     @graphql.Args() args: UpdateInteractionArgs
   ): Promise<Interaction | null> {
@@ -86,6 +126,11 @@ export class InteractionResolverBase {
   }
 
   @graphql.Mutation(() => Interaction)
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "delete",
+    possession: "any",
+  })
   async deleteInteraction(
     @graphql.Args() args: DeleteInteractionArgs
   ): Promise<Interaction | null> {
@@ -101,7 +146,13 @@ export class InteractionResolverBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.ResolveField(() => [VoiceRecording], { name: "voiceRecordings" })
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "read",
+    possession: "any",
+  })
   async findVoiceRecordings(
     @graphql.Parent() parent: Interaction,
     @graphql.Args() args: VoiceRecordingFindManyArgs
@@ -115,7 +166,13 @@ export class InteractionResolverBase {
     return results;
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.ResolveField(() => [Message], { name: "messages" })
+  @nestAccessControl.UseRoles({
+    resource: "Message",
+    action: "read",
+    possession: "any",
+  })
   async findMessages(
     @graphql.Parent() parent: Interaction,
     @graphql.Args() args: MessageFindManyArgs

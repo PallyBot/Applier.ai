@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { JobRequirement } from "./JobRequirement";
 import { JobRequirementCountArgs } from "./JobRequirementCountArgs";
 import { JobRequirementFindManyArgs } from "./JobRequirementFindManyArgs";
@@ -23,10 +29,20 @@ import { DeleteJobRequirementArgs } from "./DeleteJobRequirementArgs";
 import { AttachmentFindManyArgs } from "../../attachment/base/AttachmentFindManyArgs";
 import { Attachment } from "../../attachment/base/Attachment";
 import { JobRequirementService } from "../jobRequirement.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => JobRequirement)
 export class JobRequirementResolverBase {
-  constructor(protected readonly service: JobRequirementService) {}
+  constructor(
+    protected readonly service: JobRequirementService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "read",
+    possession: "any",
+  })
   async _jobRequirementsMeta(
     @graphql.Args() args: JobRequirementCountArgs
   ): Promise<MetaQueryPayload> {
@@ -36,14 +52,26 @@ export class JobRequirementResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [JobRequirement])
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "read",
+    possession: "any",
+  })
   async jobRequirements(
     @graphql.Args() args: JobRequirementFindManyArgs
   ): Promise<JobRequirement[]> {
     return this.service.jobRequirements(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => JobRequirement, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "read",
+    possession: "own",
+  })
   async jobRequirement(
     @graphql.Args() args: JobRequirementFindUniqueArgs
   ): Promise<JobRequirement | null> {
@@ -54,7 +82,13 @@ export class JobRequirementResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => JobRequirement)
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "create",
+    possession: "any",
+  })
   async createJobRequirement(
     @graphql.Args() args: CreateJobRequirementArgs
   ): Promise<JobRequirement> {
@@ -64,7 +98,13 @@ export class JobRequirementResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => JobRequirement)
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "update",
+    possession: "any",
+  })
   async updateJobRequirement(
     @graphql.Args() args: UpdateJobRequirementArgs
   ): Promise<JobRequirement | null> {
@@ -84,6 +124,11 @@ export class JobRequirementResolverBase {
   }
 
   @graphql.Mutation(() => JobRequirement)
+  @nestAccessControl.UseRoles({
+    resource: "JobRequirement",
+    action: "delete",
+    possession: "any",
+  })
   async deleteJobRequirement(
     @graphql.Args() args: DeleteJobRequirementArgs
   ): Promise<JobRequirement | null> {
@@ -99,7 +144,13 @@ export class JobRequirementResolverBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.ResolveField(() => [Attachment], { name: "attachments" })
+  @nestAccessControl.UseRoles({
+    resource: "Attachment",
+    action: "read",
+    possession: "any",
+  })
   async findAttachments(
     @graphql.Parent() parent: JobRequirement,
     @graphql.Args() args: AttachmentFindManyArgs

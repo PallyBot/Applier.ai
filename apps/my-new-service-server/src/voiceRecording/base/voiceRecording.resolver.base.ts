@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { VoiceRecording } from "./VoiceRecording";
 import { VoiceRecordingCountArgs } from "./VoiceRecordingCountArgs";
 import { VoiceRecordingFindManyArgs } from "./VoiceRecordingFindManyArgs";
@@ -22,10 +28,20 @@ import { UpdateVoiceRecordingArgs } from "./UpdateVoiceRecordingArgs";
 import { DeleteVoiceRecordingArgs } from "./DeleteVoiceRecordingArgs";
 import { Interaction } from "../../interaction/base/Interaction";
 import { VoiceRecordingService } from "../voiceRecording.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => VoiceRecording)
 export class VoiceRecordingResolverBase {
-  constructor(protected readonly service: VoiceRecordingService) {}
+  constructor(
+    protected readonly service: VoiceRecordingService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "read",
+    possession: "any",
+  })
   async _voiceRecordingsMeta(
     @graphql.Args() args: VoiceRecordingCountArgs
   ): Promise<MetaQueryPayload> {
@@ -35,14 +51,26 @@ export class VoiceRecordingResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [VoiceRecording])
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "read",
+    possession: "any",
+  })
   async voiceRecordings(
     @graphql.Args() args: VoiceRecordingFindManyArgs
   ): Promise<VoiceRecording[]> {
     return this.service.voiceRecordings(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => VoiceRecording, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "read",
+    possession: "own",
+  })
   async voiceRecording(
     @graphql.Args() args: VoiceRecordingFindUniqueArgs
   ): Promise<VoiceRecording | null> {
@@ -53,7 +81,13 @@ export class VoiceRecordingResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => VoiceRecording)
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "create",
+    possession: "any",
+  })
   async createVoiceRecording(
     @graphql.Args() args: CreateVoiceRecordingArgs
   ): Promise<VoiceRecording> {
@@ -71,7 +105,13 @@ export class VoiceRecordingResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => VoiceRecording)
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "update",
+    possession: "any",
+  })
   async updateVoiceRecording(
     @graphql.Args() args: UpdateVoiceRecordingArgs
   ): Promise<VoiceRecording | null> {
@@ -99,6 +139,11 @@ export class VoiceRecordingResolverBase {
   }
 
   @graphql.Mutation(() => VoiceRecording)
+  @nestAccessControl.UseRoles({
+    resource: "VoiceRecording",
+    action: "delete",
+    possession: "any",
+  })
   async deleteVoiceRecording(
     @graphql.Args() args: DeleteVoiceRecordingArgs
   ): Promise<VoiceRecording | null> {
@@ -114,9 +159,15 @@ export class VoiceRecordingResolverBase {
     }
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.ResolveField(() => Interaction, {
     nullable: true,
     name: "interaction",
+  })
+  @nestAccessControl.UseRoles({
+    resource: "Interaction",
+    action: "read",
+    possession: "any",
   })
   async getInteraction(
     @graphql.Parent() parent: VoiceRecording

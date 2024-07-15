@@ -13,6 +13,12 @@ import * as graphql from "@nestjs/graphql";
 import { GraphQLError } from "graphql";
 import { isRecordNotFoundError } from "../../prisma.util";
 import { MetaQueryPayload } from "../../util/MetaQueryPayload";
+import * as nestAccessControl from "nest-access-control";
+import * as gqlACGuard from "../../auth/gqlAC.guard";
+import { GqlDefaultAuthGuard } from "../../auth/gqlDefaultAuth.guard";
+import * as common from "@nestjs/common";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
 import { Resume } from "./Resume";
 import { ResumeCountArgs } from "./ResumeCountArgs";
 import { ResumeFindManyArgs } from "./ResumeFindManyArgs";
@@ -21,10 +27,20 @@ import { CreateResumeArgs } from "./CreateResumeArgs";
 import { UpdateResumeArgs } from "./UpdateResumeArgs";
 import { DeleteResumeArgs } from "./DeleteResumeArgs";
 import { ResumeService } from "../resume.service";
+@common.UseGuards(GqlDefaultAuthGuard, gqlACGuard.GqlACGuard)
 @graphql.Resolver(() => Resume)
 export class ResumeResolverBase {
-  constructor(protected readonly service: ResumeService) {}
+  constructor(
+    protected readonly service: ResumeService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
 
+  @graphql.Query(() => MetaQueryPayload)
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "read",
+    possession: "any",
+  })
   async _resumesMeta(
     @graphql.Args() args: ResumeCountArgs
   ): Promise<MetaQueryPayload> {
@@ -34,12 +50,24 @@ export class ResumeResolverBase {
     };
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => [Resume])
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "read",
+    possession: "any",
+  })
   async resumes(@graphql.Args() args: ResumeFindManyArgs): Promise<Resume[]> {
     return this.service.resumes(args);
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @graphql.Query(() => Resume, { nullable: true })
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "read",
+    possession: "own",
+  })
   async resume(
     @graphql.Args() args: ResumeFindUniqueArgs
   ): Promise<Resume | null> {
@@ -50,7 +78,13 @@ export class ResumeResolverBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Resume)
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "create",
+    possession: "any",
+  })
   async createResume(@graphql.Args() args: CreateResumeArgs): Promise<Resume> {
     return await this.service.createResume({
       ...args,
@@ -58,7 +92,13 @@ export class ResumeResolverBase {
     });
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @graphql.Mutation(() => Resume)
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "update",
+    possession: "any",
+  })
   async updateResume(
     @graphql.Args() args: UpdateResumeArgs
   ): Promise<Resume | null> {
@@ -78,6 +118,11 @@ export class ResumeResolverBase {
   }
 
   @graphql.Mutation(() => Resume)
+  @nestAccessControl.UseRoles({
+    resource: "Resume",
+    action: "delete",
+    possession: "any",
+  })
   async deleteResume(
     @graphql.Args() args: DeleteResumeArgs
   ): Promise<Resume | null> {
